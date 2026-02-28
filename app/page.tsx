@@ -1,65 +1,373 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCouncilStore } from "@/store/councilStore";
+import { AVAILABLE_MODELS } from "@/lib/adapters/types";
+import { CouncilGrid } from "@/components/council/CouncilGrid";
+import { SynthesisCard } from "@/components/council/SynthesisCard";
+import { ExpandedModelDialog } from "@/components/council/ModelCard";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { SettingsDrawer } from "@/components/layout/SettingsDrawer";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useCouncilStream } from "@/hooks/useCouncilStream";
+import { generateMarkdownExport, downloadMarkdown } from "@/lib/export";
+import { toast } from "sonner";
+import {
+  Send,
+  Square,
+  Settings,
+  Download,
+  FileText,
+  Sparkles,
+  ChevronRight,
+  Menu,
+  X,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+async function createThread(message: string) {
+  const res = await fetch("/api/threads", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: message.slice(0, 60), message }),
+  });
+  if (!res.ok) throw new Error("Failed to create thread");
+  return res.json();
+}
+
+export default function HomePage() {
+  const {
+    currentThreadId,
+    setCurrentThread,
+    addThread,
+    isStreaming,
+    setIsStreaming,
+    setSettingsOpen,
+    selectedModels,
+    setSelectedModels,
+    currentRuns,
+    setCurrentRuns,
+    synthesis,
+    setSynthesis,
+  } = useCouncilStore();
+
+  const [input, setInput] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [lastQuestion, setLastQuestion] = useState("");
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const qc = useQueryClient();
+
+  const { startStream, stopStream } = useCouncilStream();
+
+  // Keyboard shortcut: Ctrl+K / Cmd+K to focus input
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  // Sanitize persistent localStorage to prevent obsolete model crashes
+  useEffect(() => {
+    const validModelIds = new Set(AVAILABLE_MODELS.map((m) => m.id));
+    const cleanModels = selectedModels.filter((id) => validModelIds.has(id));
+    if (cleanModels.length !== selectedModels.length) {
+      setSelectedModels(cleanModels);
+    }
+  }, [selectedModels, setSelectedModels]);
+
+  // Load historical thread runs when currentThreadId changes
+  useEffect(() => {
+    if (!currentThreadId) return;
+    if (isStreaming) return;
+
+    let mounted = true;
+    const fetchThread = async () => {
+      try {
+        const res = await fetch(`/api/threads/${currentThreadId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!mounted) return;
+
+        // Set the question if it exists in messages
+        const userMsg = data.messages?.filter((m: any) => m.role === "user").pop();
+        if (userMsg) {
+          setLastQuestion(userMsg.content);
+        }
+
+        // Parse runs
+        const loadedRuns: Record<string, any> = {};
+        for (const r of data.modelRuns || []) {
+          if (r.isSynthesis) {
+            setSynthesis(r.output);
+            continue;
+          }
+          loadedRuns[r.model] = {
+            modelId: r.model,
+            status: r.error ? "error" : (r.finishReason ? "done" : "idle"),
+            output: r.output || "",
+            error: r.error || undefined,
+            latencyMs: r.latencyMs || undefined,
+            usage: r.usage ? JSON.parse(r.usage) : undefined,
+            citations: r.citations ? JSON.parse(r.citations) : undefined,
+          };
+        }
+
+        setCurrentRuns(loadedRuns);
+      } catch (err) {
+        console.error("Failed to fetch historical runs", err);
+      }
+    };
+
+    fetchThread();
+    return () => { mounted = false; };
+  }, [currentThreadId, setCurrentRuns, setSynthesis, isStreaming]);
+
+  const createMutation = useMutation({
+    mutationFn: createThread,
+    onSuccess: (thread) => {
+      addThread(thread);
+      setCurrentThread(thread.id);
+      qc.invalidateQueries({ queryKey: ["threads"] });
+      return thread;
+    },
+  });
+
+  const handleSubmit = useCallback(async () => {
+    const message = input.trim();
+    if (!message || isStreaming) return;
+    if (selectedModels.length === 0) {
+      toast.error("Select at least one model in Settings");
+      setSettingsOpen(true);
+      return;
+    }
+
+    setLastQuestion(message);
+    setInput("");
+
+    try {
+      let threadId = currentThreadId;
+      if (!threadId) {
+        const thread = await createMutation.mutateAsync(message);
+        threadId = thread.id;
+      }
+      await startStream(message, threadId!);
+    } catch (err) {
+      toast.error("Failed to start stream");
+      setIsStreaming(false);
+    }
+  }, [input, isStreaming, selectedModels, currentThreadId, createMutation, startStream, setSettingsOpen, setIsStreaming]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  const handleExportMarkdown = () => {
+    const runs = selectedModels
+      .map((id) => currentRuns[id])
+      .filter((r) => r?.output)
+      .map((r) => ({
+        modelId: r.modelId,
+        output: r.output,
+        latencyMs: r.latencyMs,
+        usage: r.usage,
+      }));
+
+    if (runs.length === 0) {
+      toast.error("No responses to export yet");
+      return;
+    }
+
+    const md = generateMarkdownExport(lastQuestion, runs, synthesis);
+    downloadMarkdown(md, `ai-council-${Date.now()}.md`);
+    toast.success("Exported to Markdown");
+  };
+
+  const anyDone = selectedModels.some((m) => currentRuns[m]?.status === "done");
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="flex min-h-screen bg-background relative">
+      {/* Sidebar */}
+      <div
+        className={cn(
+          "transition-all duration-300 shrink-0 sticky top-0 h-screen",
+          sidebarOpen ? "w-64" : "w-0 overflow-hidden"
+        )}
+      >
+        <Sidebar />
+      </div>
+
+      {/* Main Area */}
+      <main className="flex-1 flex flex-col min-w-0 w-full">
+        {/* Top Bar */}
+        <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b border-border bg-background/80 backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="w-8 h-8"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              {sidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </Button>
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">
+                {selectedModels.length} model{selectedModels.length !== 1 ? "s" : ""} selected
+              </span>
+              <ChevronRight className="w-3.5 h-3.5" />
+              <span>
+                {selectedModels.slice(0, 3).join(", ")}
+                {selectedModels.length > 3 && ` +${selectedModels.length - 3}`}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {anyDone && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="gap-1.5 text-xs h-8"
+                    onClick={handleExportMarkdown}
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    Export MD
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Export to Markdown</TooltipContent>
+              </Tooltip>
+            )}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="w-8 h-8"
+                  onClick={() => setSettingsOpen(true)}
+                >
+                  <Settings className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Settings & Model Selection</TooltipContent>
+            </Tooltip>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Content Area */}
+        <div className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full" id="council-content" ref={gridRef}>
+          {/* Empty State */}
+          {!isStreaming && Object.keys(currentRuns).length === 0 && (
+            <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-2">
+                <Sparkles className="w-8 h-8 text-primary" />
+              </div>
+              <h1 className="text-2xl font-bold text-foreground">AI Council</h1>
+              <p className="text-muted-foreground max-w-md">
+                Ask one question, receive parallel answers from multiple AI models.
+                Compare perspectives from GPT-4, Gemini, Claude, and more.
+              </p>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+                <kbd className="px-2 py-0.5 rounded border border-border bg-accent font-mono">
+                  Ctrl+K
+                </kbd>
+                <span>to focus input</span>
+              </div>
+            </div>
+          )}
+
+          {/* Question Display */}
+          {lastQuestion && (
+            <div className="flex justify-end animate-fade-in">
+              <div className="max-w-2xl px-4 py-3 rounded-2xl bg-primary/10 border border-primary/20 text-sm text-foreground">
+                {lastQuestion}
+              </div>
+            </div>
+          )}
+
+          {/* Council Grid */}
+          {Object.keys(currentRuns).length > 0 && (
+            <div className="animate-fade-in">
+              <CouncilGrid />
+            </div>
+          )}
+
+          {/* Synthesis */}
+          {currentThreadId && anyDone && (
+            <SynthesisCard threadId={currentThreadId} />
+          )}
+        </div>
+
+        {/* Input Area */}
+        <div className="sticky bottom-0 border-t border-border bg-background/80 backdrop-blur-md p-4 mt-auto">
+          <div className="max-w-4xl mx-auto">
+            <div
+              className={cn(
+                "flex gap-3 items-end p-1 rounded-2xl border transition-all",
+                isStreaming
+                  ? "border-primary/40 bg-primary/5 glow-blue"
+                  : "border-border bg-card focus-within:border-primary/40"
+              )}
+            >
+              <Textarea
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={
+                  isStreaming
+                    ? "Waiting for models to respond..."
+                    : `Ask all ${selectedModels.length} models… (Enter to send, Shift+Enter for newline)`
+                }
+                disabled={isStreaming}
+                className="flex-1 resize-none min-h-[44px] max-h-[160px] border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-sm placeholder:text-muted-foreground/60"
+                rows={1}
+              />
+              <div className="flex gap-1.5 pb-1.5 pr-1">
+                {isStreaming ? (
+                  <Button
+                    size="icon"
+                    variant="destructive"
+                    className="w-9 h-9 shrink-0 rounded-xl"
+                    onClick={stopStream}
+                  >
+                    <Square className="w-4 h-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    size="icon"
+                    className="w-9 h-9 shrink-0 rounded-xl bg-primary hover:bg-primary/90"
+                    onClick={handleSubmit}
+                    disabled={!input.trim() || selectedModels.length === 0}
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2 text-center">
+              Responses are sent to the respective AI provider APIs and stored in your local database.
+            </p>
+          </div>
         </div>
       </main>
+
+      {/* Modals & Drawers */}
+      <SettingsDrawer />
+      <ExpandedModelDialog />
     </div>
   );
 }

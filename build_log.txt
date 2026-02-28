@@ -1,0 +1,30 @@
+
+> ai-council@0.1.0 build
+> next build
+
+ΓÜá Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\shree\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\shree\OneDrive\Desktop\AI Council\package-lock.json
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local, .env
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 3.3s
+  Running TypeScript ...
+Failed to compile.
+
+./prisma/seed.ts:25:25
+Type error: Type '{ temperature: number; maxTokens: number; }' is not assignable to type 'string'.
+
+  23 |                         provider: "openai",
+  24 |                         model: "gpt-4o",
+> 25 |                         settingsSnap: { temperature: 0.7, maxTokens: 2048 },
+     |                         ^
+  26 |                         output: `## REST vs GraphQL: Key Differences
+  27 | 
+  28 | **REST (Representational State Transfer)** and **GraphQL** are both API paradigms, but they differ fundamentally in how data is fetched and structured.
+Next.js build worker exited with code: 1 and signal: null

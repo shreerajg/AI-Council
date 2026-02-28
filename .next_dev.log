@@ -1,0 +1,44 @@
+
+> ai-council@0.1.0 dev
+> next dev
+
+ΓÜá Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\shree\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\shree\OneDrive\Desktop\AI Council\package-lock.json
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.237.133.100:3000
+- Environments: .env.local, .env
+
+Γ£ô Starting...
+Γ£ô Ready in 732ms
+ GET / 200 in 528ms (compile: 288ms, render: 241ms)
+ GET /api/threads 200 in 98ms (compile: 75ms, render: 23ms)
+ GET /api/threads 200 in 10ms (compile: 3ms, render: 7ms)
+ GET / 200 in 102ms (compile: 9ms, render: 93ms)
+ GET /api/threads 200 in 29ms (compile: 8ms, render: 21ms)
+ POST /api/threads 201 in 47ms (compile: 10ms, render: 37ms)
+ GET /api/threads 200 in 24ms (compile: 8ms, render: 16ms)
+ GET /api/council/stream?threadId=cmm61i9fo0000o08435fx9leu&models=%5B%22gemini-2.0-flash%22%2C%22claude-3-5-sonnet-20241022%22%2C%22gpt-4o%22%5D&message=Hi&settings=%7B%7D&concurrencyLimit=4&contextMode=shared 200 in 4.4s (compile: 1224ms, render: 3.2s)
+ GET / 200 in 181ms (compile: 10ms, render: 170ms)
+ GET /api/threads 200 in 11ms (compile: 4ms, render: 7ms)
+ GET /api/council/stream?threadId=cmm61fejm0004o0skv2npgmff&models=%5B%22claude-3-5-sonnet-20241022%22%2C%22gpt-4o%22%2C%22gemini-2.0-flash%22%5D&message=Test&settings=%7B%7D&concurrencyLimit=4&contextMode=shared 200 in 3.2s (compile: 7ms, render: 3.2s)
+Γ£ô Compiled in 177ms
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+ΓÜá Fast Refresh had to perform a full reload due to a runtime error.
+Γ£ô Compiled in 52ms
+ GET /api/threads 200 in 64ms (compile: 50ms, render: 14ms)
+ GET /api/threads 200 in 62ms (compile: 29ms, render: 33ms)
+ GET / 200 in 600ms (compile: 105ms, render: 495ms)
+ GET / 200 in 128ms (compile: 7ms, render: 121ms)
+ GET /api/threads 200 in 11ms (compile: 4ms, render: 7ms)
+ GET /api/threads 200 in 9ms (compile: 3ms, render: 6ms)
+ GET / 200 in 70ms (compile: 5ms, render: 65ms)
+ GET /api/threads 200 in 7ms (compile: 3ms, render: 5ms)
+ POST /api/threads 201 in 15ms (compile: 3ms, render: 12ms)
+ GET /api/threads 200 in 8ms (compile: 3ms, render: 5ms)
+ GET /api/council/stream?threadId=cmm61oegn000io084u0030qi8&models=%5B%22gpt-4o%22%2C%22gemini-2.0-flash%22%5D&message=yo&settings=%7B%7D&concurrencyLimit=4&contextMode=shared 200 in 13.7s (compile: 3ms, render: 13.7s)
