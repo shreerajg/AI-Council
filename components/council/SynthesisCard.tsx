@@ -59,15 +59,16 @@ export function SynthesisCard({ threadId }: { threadId: string }) {
     }
 
     return (
-        <div className="glass-card border-primary/20 animate-slide-up">
+        <div className="glass-card border-primary/20 animate-slide-up overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-                <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
-                        <Sparkles className="w-3.5 h-3.5 text-primary" />
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center">
+                        <Sparkles className="w-4 h-4 text-primary" />
                     </div>
                     <span className="font-semibold text-sm">AI Synthesis</span>
-                    <span className="text-xs text-muted-foreground">via {synthesizerModel}</span>
+                    <span className="text-xs text-muted-foreground/60 px-2 py-0.5 rounded-md bg-accent/50">via {synthesizerModel}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     {!synthesis && !isSynthesizing && anyDone && (

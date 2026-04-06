@@ -21,8 +21,14 @@ export function CouncilGrid() {
                 gridTemplateColumns: `repeat(${Math.min(selectedModels.length, 2)}, 1fr)`,
             }}
         >
-            {selectedModels.map((modelId) => (
-                <ModelCard key={modelId} modelId={modelId} />
+            {selectedModels.map((modelId, index) => (
+                <div
+                    key={modelId}
+                    className="animate-scale-in"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                    <ModelCard modelId={modelId} />
+                </div>
             ))}
         </div>
     );
