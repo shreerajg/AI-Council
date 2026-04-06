@@ -115,14 +115,21 @@ export function ModelCard({ modelId, onRegenerate }: ModelCardProps) {
         <div
             className={cn(
                 "glass-card flex flex-col h-[500px] animate-slide-up transition-all",
-                run?.status === "streaming" && "glow-blue",
+                run?.status === "streaming" && "animate-pulse-glow",
                 run?.status === "error" && "border-red-500/30"
             )}
         >
             {/* Card Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-                <div className="flex items-center gap-2 min-w-0">
-                    <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full border", providerClass)}>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
+                <div className="flex items-center gap-3 min-w-0">
+                    <div className={cn("w-2 h-2 rounded-full", 
+                        run?.status === "done" && "bg-emerald-500",
+                        run?.status === "streaming" && "bg-primary animate-pulse",
+                        run?.status === "error" && "bg-red-500",
+                        run?.status === "queued" && "bg-amber-500 animate-pulse",
+                        !run || run.status === "idle" && "bg-muted-foreground/30"
+                    )} />
+                    <span className={cn("text-xs font-medium px-2.5 py-1 rounded-lg border", providerClass)}>
                         {providerLabel}
                     </span>
                     <span className="font-semibold text-sm truncate text-foreground">{shortName}</span>
@@ -182,22 +189,25 @@ export function ModelCard({ modelId, onRegenerate }: ModelCardProps) {
             {/* Card Content */}
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 min-h-0 relative scroll-smooth">
                 {!run || run.status === "idle" ? (
-                    <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
-                        Waiting...
+                    <div className="h-full flex items-center justify-center">
+                        <div className="text-center space-y-3">
+                            <div className="w-12 h-12 mx-auto rounded-xl bg-accent/50 border border-border animate-pulse" />
+                            <p className="text-muted-foreground/60 text-sm">Waiting for response...</p>
+                        </div>
                     </div>
                 ) : run.status === "queued" ? (
-                    <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
-                        <div className="text-center">
-                            <div className="flex gap-1 justify-center mb-2">
+                    <div className="h-full flex items-center justify-center">
+                        <div className="text-center space-y-3">
+                            <div className="flex gap-2 justify-center">
                                 {[0, 1, 2].map((i) => (
                                     <div
                                         key={i}
-                                        className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce"
+                                        className="w-2.5 h-2.5 rounded-full bg-primary/60 animate-bounce"
                                         style={{ animationDelay: `${i * 0.15}s` }}
                                     />
                                 ))}
                             </div>
-                            Queued...
+                            <p className="text-muted-foreground/80 text-sm">In queue...</p>
                         </div>
                     </div>
                 ) : run.status === "error" ? (
