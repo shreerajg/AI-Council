@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCouncilStore } from "@/store/councilStore";
+import { useCouncilStore, type ModelRun } from "@/store/councilStore";
 import { AVAILABLE_MODELS } from "@/lib/adapters/types";
 import { CouncilGrid } from "@/components/council/CouncilGrid";
 import { SynthesisCard } from "@/components/council/SynthesisCard";
@@ -20,7 +20,6 @@ import {
   Send,
   Square,
   Settings,
-  Download,
   FileText,
   Sparkles,
   ChevronRight,
@@ -99,13 +98,13 @@ export default function HomePage() {
         if (!mounted) return;
 
         // Set the question if it exists in messages
-        const userMsg = data.messages?.filter((m: any) => m.role === "user").pop();
+        const userMsg = data.messages?.filter((m: { role: string }) => m.role === "user").pop();
         if (userMsg) {
           setLastQuestion(userMsg.content);
         }
 
         // Parse runs
-        const loadedRuns: Record<string, any> = {};
+        const loadedRuns: Record<string, ModelRun> = {};
         for (const r of data.modelRuns || []) {
           if (r.isSynthesis) {
             setSynthesis(r.output);
@@ -161,7 +160,7 @@ export default function HomePage() {
         threadId = thread.id;
       }
       await startStream(message, threadId!);
-    } catch (err) {
+    } catch {
       toast.error("Failed to start stream");
       setIsStreaming(false);
     }

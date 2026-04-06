@@ -6,9 +6,8 @@ import remarkGfm from "remark-gfm";
 import { useCouncilStore } from "@/store/councilStore";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sparkles, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { Sparkles, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 
 export function SynthesisCard({ threadId }: { threadId: string }) {
     const {
