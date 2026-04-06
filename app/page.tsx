@@ -271,20 +271,31 @@ export default function HomePage() {
         <div className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full" id="council-content" ref={gridRef}>
           {/* Empty State */}
           {!isStreaming && Object.keys(currentRuns).length === 0 && (
-            <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-2">
-                <Sparkles className="w-8 h-8 text-primary" />
+            <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-6">
+              <div className="relative">
+                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center animate-pulse-glow">
+                  <Sparkles className="w-10 h-10 text-primary" />
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-card border border-border flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                </div>
               </div>
-              <h1 className="text-2xl font-bold text-foreground">AI Council</h1>
-              <p className="text-muted-foreground max-w-md">
-                Ask one question, receive parallel answers from multiple AI models.
-                Compare perspectives from GPT-4, Gemini, Claude, and more.
-              </p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
-                <kbd className="px-2 py-0.5 rounded border border-border bg-accent font-mono">
-                  Ctrl+K
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold text-foreground tracking-tight">AI Council</h1>
+                <p className="text-muted-foreground max-w-md leading-relaxed">
+                  Ask one question, receive parallel answers from multiple AI models.
+                  Compare perspectives from GPT-4, Gemini, Claude, and more.
+                </p>
+              </div>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2 bg-card/50 px-4 py-2 rounded-full border border-border/50">
+                <kbd className="px-2.5 py-1 rounded-md border border-border bg-accent font-mono text-foreground shadow-sm">
+                  Ctrl
                 </kbd>
-                <span>to focus input</span>
+                <span className="text-muted-foreground/60">+</span>
+                <kbd className="px-2.5 py-1 rounded-md border border-border bg-accent font-mono text-foreground shadow-sm">
+                  K
+                </kbd>
+                <span className="text-muted-foreground/60">to focus</span>
               </div>
             </div>
           )}
@@ -312,36 +323,38 @@ export default function HomePage() {
         </div>
 
         {/* Input Area */}
-        <div className="sticky bottom-0 border-t border-border bg-background/80 backdrop-blur-md p-4 mt-auto">
+        <div className="sticky bottom-0 border-t border-border/50 bg-background/60 backdrop-blur-xl p-4 mt-auto">
           <div className="max-w-4xl mx-auto">
             <div
               className={cn(
-                "flex gap-3 items-end p-1 rounded-2xl border transition-all",
+                "flex gap-3 items-end p-2 rounded-2xl border transition-all duration-300",
                 isStreaming
-                  ? "border-primary/40 bg-primary/5 glow-blue"
-                  : "border-border bg-card focus-within:border-primary/40"
+                  ? "border-primary/50 bg-primary/5 shadow-lg shadow-primary/10"
+                  : "border-border/80 bg-card/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
               )}
             >
-              <Textarea
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={
-                  isStreaming
-                    ? "Waiting for models to respond..."
-                    : `Ask all ${selectedModels.length} models… (Enter to send, Shift+Enter for newline)`
-                }
-                disabled={isStreaming}
-                className="flex-1 resize-none min-h-[44px] max-h-[160px] border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-sm placeholder:text-muted-foreground/60"
-                rows={1}
-              />
-              <div className="flex gap-1.5 pb-1.5 pr-1">
+              <div className="flex-1 relative">
+                <Textarea
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={
+                    isStreaming
+                      ? "Waiting for models to respond..."
+                      : `Ask all ${selectedModels.length} models…`
+                  }
+                  disabled={isStreaming}
+                  className="flex-1 resize-none min-h-[44px] max-h-[160px] border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-sm placeholder:text-muted-foreground/60 pl-2"
+                  rows={1}
+                />
+              </div>
+              <div className="flex gap-1.5 pb-1 pr-1">
                 {isStreaming ? (
                   <Button
                     size="icon"
                     variant="destructive"
-                    className="w-9 h-9 shrink-0 rounded-xl"
+                    className="w-9 h-9 shrink-0 rounded-xl transition-all hover:scale-105"
                     onClick={stopStream}
                   >
                     <Square className="w-4 h-4" />
@@ -349,7 +362,7 @@ export default function HomePage() {
                 ) : (
                   <Button
                     size="icon"
-                    className="w-9 h-9 shrink-0 rounded-xl bg-primary hover:bg-primary/90"
+                    className="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all hover:scale-105 shadow-lg shadow-primary/25"
                     onClick={handleSubmit}
                     disabled={!input.trim() || selectedModels.length === 0}
                   >
@@ -358,8 +371,8 @@ export default function HomePage() {
                 )}
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              Responses are sent to the respective AI provider APIs and stored in your local database.
+            <p className="text-xs text-muted-foreground/60 mt-2 text-center">
+              Press <kbd className="px-1 py-0.5 rounded bg-muted/50 text-[10px]">Enter</kbd> to send · <kbd className="px-1 py-0.5 rounded bg-muted/50 text-[10px]">Shift+Enter</kbd> for new line
             </p>
           </div>
         </div>
