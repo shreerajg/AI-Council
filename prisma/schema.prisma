@@ -58,6 +58,8 @@ model Thread {
   id        String     @id @default(cuid())
   title     String     @default("New Thread")
   userId    String?
+  shareToken String?   @unique // For public sharing links
+  isShared   Boolean   @default(false) // Whether thread is publicly shared
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
