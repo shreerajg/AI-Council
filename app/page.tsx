@@ -9,7 +9,6 @@ import { SynthesisCard } from "@/components/council/SynthesisCard";
 import { ExpandedModelDialog } from "@/components/council/ModelCard";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SettingsDrawer } from "@/components/layout/SettingsDrawer";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -27,7 +26,6 @@ import {
   X,
   Share,
   Link,
-  Copy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -212,6 +210,40 @@ export default function HomePage() {
 
   const anyDone = selectedModels.some((m) => currentRuns[m]?.status === "done");
 
+  const handleShare = async () => {
+    if (!currentThreadId) {
+      toast.error("No thread to share");
+      return;
+    }
+    
+    setIsSharing(true);
+    try {
+      const updated = await updateThreadShare(currentThreadId, true);
+      setCurrentShareToken(updated.shareToken);
+      const shareUrl = `${window.location.origin}/share/${updated.shareToken}`;
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Share link copied to clipboard!");
+      } catch {
+      toast.error("Failed to share thread");
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
+  const handleStopSharing = async () => {
+    if (!currentThreadId) return;
+    setIsSharing(true);
+    try {
+      await updateThreadShare(currentThreadId, false);
+      setCurrentShareToken(null);
+      toast.success("Thread unshared");
+    } catch {
+      toast.error("Failed to unshare thread");
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-background relative">
       {/* Sidebar */}
@@ -250,6 +282,34 @@ export default function HomePage() {
           </div>
 
           <div className="flex items-center gap-2">
+            {currentThreadId && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="gap-1.5 text-xs h-8"
+                    onClick={currentShareToken ? handleStopSharing : handleShare}
+                    disabled={isSharing}
+                  >
+                    {currentShareToken ? (
+                      <>
+                        <Link className="w-3.5 h-3.5" />
+                        Shared
+                      </>
+                    ) : (
+                      <>
+                        <Share className="w-3.5 h-3.5" />
+                        Share
+                      </>
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {currentShareToken ? "Stop sharing this thread" : "Share this thread publicly"}
+                </TooltipContent>
+              </Tooltip>
+            )}
             {anyDone && (
               <Tooltip>
                 <TooltipTrigger asChild>
