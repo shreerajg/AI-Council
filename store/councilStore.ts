@@ -71,6 +71,10 @@ export interface CouncilStore {
     setExpandedModel: (modelId: string | null) => void;
     settingsOpen: boolean;
     setSettingsOpen: (v: boolean) => void;
+    
+    // Share state
+    currentShareToken: string | null;
+    setCurrentShareToken: (token: string | null) => void;
 }
 
 export const useCouncilStore = create<CouncilStore>()(
@@ -170,6 +174,9 @@ export const useCouncilStore = create<CouncilStore>()(
             setExpandedModel: (modelId) => set({ expandedModel: modelId }),
             settingsOpen: false,
             setSettingsOpen: (v) => set({ settingsOpen: v }),
+            
+            currentShareToken: null,
+            setCurrentShareToken: (token) => set({ currentShareToken: token }),
         }),
         {
             name: "council-store",

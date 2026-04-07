@@ -25,6 +25,9 @@ import {
   ChevronRight,
   Menu,
   X,
+  Share,
+  Link,
+  Copy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +38,16 @@ async function createThread(message: string) {
     body: JSON.stringify({ title: message.slice(0, 60), message }),
   });
   if (!res.ok) throw new Error("Failed to create thread");
+  return res.json();
+}
+
+async function updateThreadShare(threadId: string, isShared: boolean) {
+  const res = await fetch(`/api/threads/${threadId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ isShared }),
+  });
+  if (!res.ok) throw new Error("Failed to update thread share");
   return res.json();
 }
 
