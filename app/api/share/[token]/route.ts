@@ -9,7 +9,10 @@ export async function GET(
     const { token } = await params;
     
     const thread = await prisma.thread.findFirst({
-        where: { shareToken: token, isShared: true },
+        where: { 
+            shareToken: token,
+            isShared: true 
+        },
         include: {
             messages: { orderBy: { createdAt: "asc" } },
             modelRuns: { orderBy: { createdAt: "asc" } },
