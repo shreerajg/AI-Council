@@ -65,11 +65,14 @@ export default function HomePage() {
     setCurrentRuns,
     synthesis,
     setSynthesis,
+    currentShareToken,
+    setCurrentShareToken,
   } = useCouncilStore();
 
   const [input, setInput] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [lastQuestion, setLastQuestion] = useState("");
+  const [isSharing, setIsSharing] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const qc = useQueryClient();
