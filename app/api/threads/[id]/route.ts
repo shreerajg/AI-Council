@@ -28,11 +28,26 @@ export async function PATCH(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const { title } = await req.json();
+    const { title, isShared } = await req.json();
+
+    const updateData: Record<string, unknown> = {};
+
+    if (title !== undefined) {
+        updateData.title = title;
+    }
+
+    if (isShared !== undefined) {
+        updateData.isShared = isShared;
+        if (isShared && !updateData.shareToken) {
+            updateData.shareToken = crypto.randomUUID();
+        } else if (!isShared) {
+            updateData.shareToken = null;
+        }
+    }
 
     const thread = await prisma.thread.update({
         where: { id },
-        data: { title },
+        data: updateData,
     });
 
     return NextResponse.json(thread);
