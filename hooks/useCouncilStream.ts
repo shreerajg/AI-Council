@@ -4,7 +4,6 @@ import { useCallback, useRef, useEffect } from "react";
 import { useCouncilStore } from "@/store/councilStore";
 import { toast } from "sonner";
 
-const SSE_TIMEOUT_MS = 60000; // 60 second timeout per model
 const RECONNECT_DELAY_MS = 2000;
 
 export function useCouncilStream() {
@@ -12,8 +11,9 @@ export function useCouncilStream() {
     const eventSourceRef = useRef<EventSource | null>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const messageRef = useRef<string>("");
+    const threadIdRef = useRef<string>("");
 
-    // Cleanup on unmount
     useEffect(() => {
         return () => {
             if (eventSourceRef.current) {
@@ -28,9 +28,22 @@ export function useCouncilStream() {
         };
     }, []);
 
+    const stopStream = useCallback(() => {
+        if (eventSourceRef.current) {
+            eventSourceRef.current.close();
+            eventSourceRef.current = null;
+        }
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        if (reconnectTimeoutRef.current) {
+            clearTimeout(reconnectTimeoutRef.current);
+        }
+        store.setIsStreaming(false);
+    }, [store]);
+
     const startStream = useCallback(
         async (message: string, threadId: string) => {
-            // Clean up previous connection
             if (eventSourceRef.current) {
                 eventSourceRef.current.close();
             }
@@ -41,6 +54,9 @@ export function useCouncilStream() {
                 clearTimeout(reconnectTimeoutRef.current);
             }
 
+            messageRef.current = message;
+            threadIdRef.current = threadId;
+
             if (store.selectedModels.length === 0) {
                 toast.error("Please select at least one model");
                 return;
@@ -49,7 +65,6 @@ export function useCouncilStream() {
             store.clearRuns();
             store.setSynthesis(null);
 
-            // Mark all selected models as queued
             for (const modelId of store.selectedModels) {
                 store.setRunStatus(modelId, "queued");
             }
@@ -69,14 +84,13 @@ export function useCouncilStream() {
                 const es = new EventSource(`/api/council/stream?${params}`);
                 eventSourceRef.current = es;
 
-                // Set timeout for SSE connection
                 timeoutRef.current = setTimeout(() => {
                     if (store.isStreaming) {
                         toast.error("Connection timed out. Please try again.");
                         es.close();
                         store.setIsStreaming(false);
                     }
-                }, 30000); // 30 second connection timeout
+                }, 30000);
 
                 es.addEventListener("start", (e) => {
                     if (timeoutRef.current) {
@@ -127,20 +141,11 @@ export function useCouncilStream() {
                     es.close();
                 });
 
-                es.addEventListener("error", (e) => {
-                    // Real SSE connection error
+                es.addEventListener("error", () => {
                     if (store.isStreaming) {
                         store.setIsStreaming(false);
                         es.close();
-                        toast.error("Stream connection lost. Retrying...");
-                        
-                        // Attempt reconnect after delay
-                        reconnectTimeoutRef.current = setTimeout(() => {
-                            if (store.isStreaming === false) {
-                                // Try starting again
-                                startStream(message, threadId);
-                            }
-                        }, RECONNECT_DELAY_MS);
+                        toast.error("Stream connection lost. Please try again.");
                     }
                 });
 
@@ -157,20 +162,6 @@ export function useCouncilStream() {
         },
         [store]
     );
-
-    const stopStream = useCallback(() => {
-        if (eventSourceRef.current) {
-            eventSourceRef.current.close();
-            eventSourceRef.current = null;
-        }
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
-        if (reconnectTimeoutRef.current) {
-            clearTimeout(reconnectTimeoutRef.current);
-        }
-        store.setIsStreaming(false);
-    }, [store]);
 
     return { startStream, stopStream };
 }

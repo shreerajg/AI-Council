@@ -4,7 +4,7 @@ import { getAdapter } from "@/lib/adapters";
 import type { AdapterMessage } from "@/lib/adapters/types";
 
 export async function POST(req: NextRequest) {
-    const { threadId, synthesizerModel, contextMode } = await req.json();
+    const { threadId, synthesizerModel } = await req.json();
 
     if (!threadId || !synthesizerModel) {
         return NextResponse.json({ error: "Missing threadId or synthesizerModel" }, { status: 400 });

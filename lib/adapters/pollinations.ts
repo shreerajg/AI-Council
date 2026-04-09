@@ -1,6 +1,18 @@
 import OpenAI from "openai";
 import type { AdapterMessage, AdapterSettings, ModelAdapter, StreamChunk } from "./types";
 
+interface ChatChunk {
+    choices: Array<{
+        delta?: {
+            content?: string;
+        };
+    }>;
+    usage?: {
+        prompt_tokens: number;
+        completion_tokens: number;
+    };
+}
+
 export function createPollinationsAdapter(modelId: string): ModelAdapter {
     const pollinationsModelName = modelId.replace("pollinations-", "");
 
@@ -66,7 +78,7 @@ export function createPollinationsAdapter(modelId: string): ModelAdapter {
             let completionTokens = 0;
 
             try {
-                for await (const chunk of streamResponse as any) {
+                for await (const chunk of streamResponse as unknown as Iterable<ChatChunk>) {
                     if (signal.aborted) break;
                     const delta = chunk.choices[0]?.delta?.content;
                     if (delta) {

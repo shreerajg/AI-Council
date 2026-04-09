@@ -1,6 +1,18 @@
 import OpenAI from "openai";
 import type { AdapterMessage, AdapterSettings, ModelAdapter, StreamChunk } from "./types";
 
+interface ChatChunk {
+    choices: Array<{
+        delta?: {
+            content?: string;
+        };
+    }>;
+    usage?: {
+        prompt_tokens: number;
+        completion_tokens: number;
+    };
+}
+
 export function createOpenAICompatAdapter(
     modelId: string,
     baseURL: string,
@@ -76,7 +88,7 @@ export function createOpenAICompatAdapter(
             let completionTokens = 0;
 
             try {
-                for await (const chunk of response as any) {
+                for await (const chunk of response as unknown as Iterable<ChatChunk>) {
                     if (signal.aborted) break;
                     const delta = chunk.choices[0]?.delta?.content;
                     if (delta) {

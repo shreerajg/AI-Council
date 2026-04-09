@@ -1,2 +1,0 @@
-STATUS: 200
-HEADERS: {"date":"Sat, 28 Feb 2026 15:01:03 GMT","content-type":"text/event-stream; charset=utf-8","transfer-encoding":"chunked","connection":"keep-alive","access-control-expose-headers":"nvcf-reqid","nvcf-reqid":"6526f673-564c-4710-a913-51057cc8ec5c","nvcf-status":"fulfilled","server":"uvicorn","vary":"Origin"}

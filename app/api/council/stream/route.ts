@@ -152,9 +152,10 @@ export async function GET(req: NextRequest) {
 
                 controller.enqueue(encoder.encode(formatSSE("complete", { models: selectedModels })));
                 controller.close();
-            } catch (err: any) {
+            } catch (err) {
                 console.error("STREAM ERROR ROUTE:", err);
-                controller.enqueue(encoder.encode(formatSSE("fatal_error", { error: err.message || String(err) })));
+                const errorMessage = err instanceof Error ? err.message : String(err);
+                controller.enqueue(encoder.encode(formatSSE("fatal_error", { error: errorMessage })));
                 controller.close();
             }
         },
