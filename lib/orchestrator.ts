@@ -32,7 +32,17 @@ async function runModelWithRetry(
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
-            const adapter = getAdapter(modelId);
+            if (signal.aborted) return;
+
+            let adapter;
+            try {
+                adapter = getAdapter(modelId);
+            } catch (adapterErr) {
+                const errMsg = adapterErr instanceof Error ? adapterErr.message : String(adapterErr);
+                onEvent({ event: "model_error", modelId, error: `Adapter not available: ${errMsg}` });
+                return;
+            }
+
             for await (const chunk of adapter.stream(messages, settings, signal)) {
                 if (signal.aborted) return;
                 if (chunk.type === "token") {
@@ -56,7 +66,6 @@ async function runModelWithRetry(
                 onEvent({ event: "model_error", modelId, error: errMsg });
                 return;
             }
-            // Exponential backoff: 1s, 2s, ...
             await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt)));
         }
     }
@@ -64,6 +73,12 @@ async function runModelWithRetry(
 
 export async function orchestrate(options: OrchestratorOptions): Promise<void> {
     const { messages, selectedModels, settings, concurrencyLimit = 4, signal, onEvent } = options;
+    
+    if (!selectedModels || selectedModels.length === 0) {
+        onEvent({ event: "model_error", modelId: "system", error: "No models selected" });
+        return;
+    }
+
     const limit = pLimit(concurrencyLimit);
 
     const tasks = selectedModels.map((modelId) =>
@@ -78,5 +93,9 @@ export async function orchestrate(options: OrchestratorOptions): Promise<void> {
         )
     );
 
-    await Promise.allSettled(tasks);
+    try {
+        await Promise.allSettled(tasks);
+    } catch (err) {
+        console.error("Orchestrator error:", err);
+    }
 }
