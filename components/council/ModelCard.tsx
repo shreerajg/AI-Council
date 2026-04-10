@@ -53,20 +53,29 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "queued":
             return (
-                <Badge variant="secondary" className="text-xs gap-1 animate-pulse">
-                    <Clock className="w-3 h-3" /> Queued
+                <Badge variant="secondary" className="text-xs gap-1">
+                    <div className="flex gap-1">
+                        {[0, 1, 2].map((i) => (
+                            <div
+                                key={i}
+                                className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-bounce"
+                                style={{ animationDelay: `${i * 0.15}s` }}
+                            />
+                        ))}
+                    </div>
+                    Queued
                 </Badge>
             );
         case "streaming":
             return (
-                <Badge className="text-xs gap-1 bg-primary/20 text-primary border border-primary/30 animate-pulse">
-                    <Zap className="w-3 h-3" /> Streaming
+                <Badge className="text-xs gap-1 bg-primary/20 text-primary border border-primary/30">
+                    <Zap className="w-3 h-3 animate-pulse" /> Streaming
                 </Badge>
             );
         case "done":
             return (
                 <Badge className="text-xs gap-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    <CheckCircle2 className="w-3 h-3" /> Done
+                    <CheckCircle2 className="w-3 h-3 animate-dot-burst" /> Done
                 </Badge>
             );
         case "error":
