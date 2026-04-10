@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SessionProvider } from "next-auth/react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
     const [queryClient] = useState(
@@ -17,22 +18,24 @@ export function Providers({ children }: { children: React.ReactNode }) {
     );
 
     return (
-        <QueryClientProvider client={queryClient}>
-            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-                <TooltipProvider>
-                    {children}
-                    <Toaster
-                        position="bottom-right"
-                        toastOptions={{
-                            style: {
-                                background: "hsl(224 71% 7%)",
-                                border: "1px solid hsl(216 34% 17%)",
-                                color: "hsl(213 31% 91%)",
-                            },
-                        }}
-                    />
-                </TooltipProvider>
-            </ThemeProvider>
-        </QueryClientProvider>
+        <SessionProvider>
+            <QueryClientProvider client={queryClient}>
+                <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+                    <TooltipProvider>
+                        {children}
+                        <Toaster
+                            position="bottom-right"
+                            toastOptions={{
+                                style: {
+                                    background: "hsl(224 71% 7%)",
+                                    border: "1px solid hsl(216 34% 17%)",
+                                    color: "hsl(213 31% 91%)",
+                                },
+                            }}
+                        />
+                    </TooltipProvider>
+                </ThemeProvider>
+            </QueryClientProvider>
+        </SessionProvider>
     );
 }
