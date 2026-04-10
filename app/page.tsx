@@ -429,20 +429,20 @@ export default function HomePage() {
                   <Button
                     size="icon"
                     variant="destructive"
-                    className="w-9 h-9 shrink-0 rounded-xl transition-all hover:scale-105"
+                    className="w-9 h-9 shrink-0 rounded-xl transition-all hover:scale-110 active:scale-95"
                     onClick={stopStream}
                   >
                     <Square className="w-4 h-4" />
                   </Button>
                 ) : (
-                  <Button
-                    size="icon"
-                    className="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all hover:scale-105 shadow-lg shadow-primary/25"
-                    onClick={handleSubmit}
-                    disabled={!input.trim() || selectedModels.length === 0}
-                  >
-                    <Send className="w-4 h-4" />
-                  </Button>
+<Button
+                     size="icon"
+                     className="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all hover:scale-110 hover:rotate-12 shadow-lg shadow-primary/25 active:scale-95"
+                     onClick={handleSubmit}
+                     disabled={!input.trim() || selectedModels.length === 0}
+                   >
+                     <Send className="w-4 h-4 transition-transform" />
+                   </Button>
                 )}
               </div>
             </div>
