@@ -1,14 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { getAdapter } from "@/lib/adapters";
 import type { AdapterMessage } from "@/lib/adapters/types";
 
 export async function POST(req: NextRequest) {
+    const session = await auth();
+    if (!session?.user?.email) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { threadId, synthesizerModel } = await req.json();
 
     if (!threadId || !synthesizerModel) {
         return NextResponse.json({ error: "Missing threadId or synthesizerModel" }, { status: 400 });
     }
+
+    const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+    });
 
     const thread = await prisma.thread.findUnique({
         where: { id: threadId },
@@ -20,6 +30,10 @@ export async function POST(req: NextRequest) {
 
     if (!thread) {
         return NextResponse.json({ error: "Thread not found" }, { status: 404 });
+    }
+
+    if (thread.userId && thread.userId !== user?.id) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const userMessage = thread.messages.find((m) => m.role === "user")?.content || "";
@@ -67,7 +81,6 @@ Format your synthesis clearly with sections. Use model names (e.g., "pollination
         return NextResponse.json({ error: errorMsg }, { status: 500 });
     }
 
-    // Save synthesis as a model run
     const run = await prisma.modelRun.create({
         data: {
             threadId,

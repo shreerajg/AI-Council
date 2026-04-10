@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { orchestrate, SSEEvent } from "@/lib/orchestrator";
 import type { AdapterMessage, AdapterSettings } from "@/lib/adapters/types";
 
@@ -11,6 +12,20 @@ function formatSSE(event: string, data: unknown): string {
 }
 
 export async function GET(req: NextRequest) {
+    const session = await auth();
+    if (!session?.user?.email) {
+        return new Response(
+            formatSSE("fatal_error", { error: "Unauthorized" }),
+            {
+                status: 401,
+                headers: {
+                    "Content-Type": "text/event-stream",
+                    "Cache-Control": "no-cache",
+                    Connection: "keep-alive",
+                },
+            }
+        );
+    }
     const { searchParams } = req.nextUrl;
     const threadId = searchParams.get("threadId");
     const modelsParam = searchParams.get("models");
