@@ -38,17 +38,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        const isValid = credentials.password === user.password;
+        const isValid = credentials.password === user.password!;
         if (!isValid) {
           return null;
         }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-        };
 
         return {
           id: user.id,
