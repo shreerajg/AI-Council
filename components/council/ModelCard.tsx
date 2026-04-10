@@ -114,13 +114,13 @@ export function ModelCard({ modelId, onRegenerate }: ModelCardProps) {
     return (
         <div
             className={cn(
-                "glass-card flex flex-col h-[500px] animate-slide-up transition-all",
+                "glass-card flex flex-col h-[500px] animate-slide-up transition-all card-hover-lift",
                 run?.status === "streaming" && "animate-pulse-glow",
                 run?.status === "error" && "border-red-500/30"
             )}
         >
             {/* Card Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 group">
                 <div className="flex items-center gap-3 min-w-0">
                     <div className={cn("w-2 h-2 rounded-full", 
                         run?.status === "done" && "bg-emerald-500",
@@ -141,12 +141,12 @@ export function ModelCard({ modelId, onRegenerate }: ModelCardProps) {
                             <Button
                                 size="icon"
                                 variant="ghost"
-                                className="w-7 h-7 hover:bg-accent"
+                                className="w-7 h-7 hover:bg-accent hover:scale-110 transition-all duration-200"
                                 onClick={handleCopy}
                                 disabled={!run?.output}
                             >
                                 {copied ? (
-                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 animate-dot-burst" />
                                 ) : (
                                     <Copy className="w-3.5 h-3.5" />
                                 )}
