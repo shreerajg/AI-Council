@@ -2,6 +2,7 @@
 
 import { useCouncilStore } from "@/store/councilStore";
 import { ModelCard } from "./ModelCard";
+import { cn } from "@/lib/utils";
 
 export function CouncilGrid() {
     const { selectedModels } = useCouncilStore();
@@ -24,8 +25,16 @@ export function CouncilGrid() {
             {selectedModels.map((modelId, index) => (
                 <div
                     key={modelId}
-                    className="animate-scale-in"
-                    style={{ animationDelay: `${index * 0.1}s` }}
+                    className={cn(
+                        "animate-scale-in card-hover-lift",
+                        index === 0 && "stagger-1",
+                        index === 1 && "stagger-2",
+                        index === 2 && "stagger-3",
+                        index === 3 && "stagger-4",
+                        index === 4 && "stagger-5",
+                        index === 5 && "stagger-6"
+                    )}
+                    style={{ animationDelay: `${index * 0.08}s` }}
                 >
                     <ModelCard modelId={modelId} />
                 </div>

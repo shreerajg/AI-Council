@@ -98,12 +98,12 @@ export function Sidebar() {
             {/* New Thread Button */}
             <div className="p-3">
                 <Button
-                    className="w-full gap-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 transition-all hover:scale-[1.02]"
+                    className="w-full gap-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/10"
                     variant="ghost"
                     onClick={() => createMutation.mutate("")}
                     disabled={createMutation.isPending}
                 >
-                    <MessageSquarePlus className="w-4 h-4" />
+                    <MessageSquarePlus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
                     New Thread
                 </Button>
             </div>
@@ -169,8 +169,8 @@ function ThreadItem({
             className={cn(
                 "group flex items-center gap-2 rounded-xl px-3 py-2.5 cursor-pointer transition-all text-sm border",
                 isActive
-                    ? "bg-primary/10 text-primary border-primary/20"
-                    : "hover:bg-accent/50 text-foreground/70 border-transparent hover:border-border/50"
+                    ? "bg-primary/10 text-primary border-primary/20 animate-slide-in-right"
+                    : "hover:bg-accent/50 text-foreground/70 border-transparent hover:border-border/50 hover:translate-x-1"
             )}
             onClick={onSelect}
         >

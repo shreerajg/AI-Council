@@ -347,27 +347,28 @@ export default function HomePage() {
           {/* Empty State */}
           {!isStreaming && Object.keys(currentRuns).length === 0 && (
             <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-6">
-              <div className="relative">
-                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center animate-pulse-glow">
-                  <Sparkles className="w-10 h-10 text-primary" />
+              <div className="relative animate-float">
+                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center animate-pulse-glow shadow-2xl">
+                  <Sparkles className="w-12 h-12 text-primary" />
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-card border border-border flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-card border border-border flex items-center justify-center animate-dot-burst">
+                  <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
                 </div>
+                <div className="absolute -top-2 -left-2 w-5 h-5 rounded-full bg-primary/20 animate-ping" />
               </div>
               <div className="space-y-2">
-                <h1 className="text-3xl font-bold text-foreground tracking-tight">AI Council</h1>
+                <h1 className="text-4xl font-bold text-foreground tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent animate-pulse-glow">AI Council</h1>
                 <p className="text-muted-foreground max-w-md leading-relaxed">
                   Ask one question, receive parallel answers from multiple AI models.
                   Compare perspectives from GPT-4, Gemini, Claude, and more.
                 </p>
               </div>
-              <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2 bg-card/50 px-4 py-2 rounded-full border border-border/50">
-                <kbd className="px-2.5 py-1 rounded-md border border-border bg-accent font-mono text-foreground shadow-sm">
+              <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2 bg-card/50 px-4 py-2 rounded-full border border-border/50 hover:border-primary/30 transition-colors">
+                <kbd className="px-2.5 py-1 rounded-md border border-border bg-accent font-mono text-foreground shadow-sm hover:scale-105 transition-transform">
                   Ctrl
                 </kbd>
                 <span className="text-muted-foreground/60">+</span>
-                <kbd className="px-2.5 py-1 rounded-md border border-border bg-accent font-mono text-foreground shadow-sm">
+                <kbd className="px-2.5 py-1 rounded-md border border-border bg-accent font-mono text-foreground shadow-sm hover:scale-105 transition-transform">
                   K
                 </kbd>
                 <span className="text-muted-foreground/60">to focus</span>
