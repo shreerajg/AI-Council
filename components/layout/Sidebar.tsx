@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCouncilStore } from "@/store/councilStore";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
     Trash2,
     MessageCircle,
     Sparkles,
+    X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
@@ -49,6 +50,7 @@ export function Sidebar() {
         removeThread,
     } = useCouncilStore();
     const qc = useQueryClient();
+    const [searchQuery, setSearchQuery] = useState("");
 
     const { data, isLoading } = useQuery({
         queryKey: ["threads"],
@@ -58,6 +60,10 @@ export function Sidebar() {
     useEffect(() => {
         if (data) setThreads(data);
     }, [data, setThreads]);
+
+    const filteredThreads = threads.filter((thread) =>
+        thread.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const createMutation = useMutation({
         mutationFn: createThread,
@@ -114,8 +120,18 @@ export function Sidebar() {
                     <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-muted-foreground/60" />
                     <Input
                         placeholder="Search threads..."
-                        className="pl-8 h-8 text-sm bg-accent/30 border-border/50 focus-visible:ring-primary/30 focus-visible:border-primary/30"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-8 pr-8 h-8 text-sm bg-accent/30 border-border/50 focus-visible:ring-primary/30 focus-visible:border-primary/30"
                     />
+                    {searchQuery && (
+                        <button
+                            className="absolute right-2.5 top-2.5 text-muted-foreground/60 hover:text-foreground"
+                            onClick={() => setSearchQuery("")}
+                        >
+                            <X className="w-3.5 h-3.5" />
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -123,14 +139,14 @@ export function Sidebar() {
             <ScrollArea className="flex-1 px-2">
                 {isLoading ? (
                     <div className="p-4 text-center text-muted-foreground/60 text-sm">Loading...</div>
-                ) : threads.length === 0 ? (
+                ) : filteredThreads.length === 0 ? (
                     <div className="p-4 text-center text-muted-foreground/60 text-sm">
                         <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-30" />
-                        No threads yet
+                        {searchQuery ? "No threads match your search" : "No threads yet"}
                     </div>
                 ) : (
                     <div className="space-y-1 py-1">
-                        {threads.map((thread) => (
+                        {filteredThreads.map((thread) => (
                             <ThreadItem
                                 key={thread.id}
                                 thread={thread}
