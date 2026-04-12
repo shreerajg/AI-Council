@@ -96,6 +96,8 @@ export function Sidebar() {
         onSuccess: () => {
             setThreads([]);
             setCurrentThread(null);
+            clearRuns();
+            setSynthesis(null);
             qc.invalidateQueries({ queryKey: ["threads"] });
             toast.success("All history cleared");
         },
