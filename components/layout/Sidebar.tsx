@@ -52,6 +52,8 @@ export function Sidebar() {
         threads,
         addThread,
         removeThread,
+        clearRuns,
+        setSynthesis,
     } = useCouncilStore();
     const qc = useQueryClient();
     const [searchQuery, setSearchQuery] = useState("");
