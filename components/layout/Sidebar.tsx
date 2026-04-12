@@ -40,6 +40,10 @@ async function deleteThread(id: string): Promise<void> {
     await fetch(`/api/threads/${id}`, { method: "DELETE" });
 }
 
+async function clearAllHistory(): Promise<void> {
+    await fetch("/api/threads", { method: "DELETE" });
+}
+
 export function Sidebar() {
     const {
         currentThreadId,
