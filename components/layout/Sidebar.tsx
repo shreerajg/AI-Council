@@ -89,6 +89,17 @@ export function Sidebar() {
         onError: () => toast.error("Failed to delete thread"),
     });
 
+    const clearMutation = useMutation({
+        mutationFn: clearAllHistory,
+        onSuccess: () => {
+            setThreads([]);
+            setCurrentThread(null);
+            qc.invalidateQueries({ queryKey: ["threads"] });
+            toast.success("All history cleared");
+        },
+        onError: () => toast.error("Failed to clear history"),
+    });
+
     return (
         <aside className="flex flex-col h-full w-64 border-r border-border/50 bg-card/30 backdrop-blur-sm">
             {/* Header */}
