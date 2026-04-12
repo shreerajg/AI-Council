@@ -176,6 +176,26 @@ export function Sidebar() {
 
             <Separator className="bg-border/50" />
 
+            {/* Clear History Button */}
+            {threads.length > 0 && (
+                <div className="p-3">
+                    <Button
+                        className="w-full gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                            if (confirm("Are you sure you want to delete all threads? This cannot be undone.")) {
+                                clearMutation.mutate();
+                            }
+                        }}
+                        disabled={clearMutation.isPending}
+                    >
+                        <Trash2 className="w-4 h-4" />
+                        Clear All History
+                    </Button>
+                </div>
+            )}
+
             {/* Footer */}
             <div className="p-3 text-xs text-muted-foreground/50 text-center">
                 Multi-LLM Research Dashboard
