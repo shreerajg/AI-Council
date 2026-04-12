@@ -58,3 +58,37 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(thread, { status: 201 });
 }
+
+export async function DELETE() {
+    const session = await auth();
+    if (!session?.user?.email) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email: session.user.email },
+        });
+
+        if (!user) {
+            return NextResponse.json({ error: "User not found" }, { status: 404 });
+        }
+
+        await prisma.modelRun.deleteMany({
+            where: { thread: { userId: user.id } },
+        });
+
+        await prisma.message.deleteMany({
+            where: { thread: { userId: user.id } },
+        });
+
+        await prisma.thread.deleteMany({
+            where: { userId: user.id },
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("PRISMA ERROR IN DELETE ALL THREADS:", error);
+        return NextResponse.json({ error: String(error) }, { status: 500 });
+    }
+}
