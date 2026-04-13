@@ -58,7 +58,7 @@ export function SynthesisCard({ threadId }: { threadId: string }) {
     }
 
     return (
-        <div className="glass-card border-primary/20 animate-slide-up overflow-hidden">
+        <div className="glass-card border-primary/20 animate-slide-up overflow-hidden hover-glow">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
