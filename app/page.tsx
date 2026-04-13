@@ -378,8 +378,8 @@ export default function HomePage() {
 
           {/* Question Display */}
           {lastQuestion && (
-            <div className="flex justify-end animate-fade-in">
-              <div className="max-w-2xl px-4 py-3 rounded-2xl bg-primary/10 border border-primary/20 text-sm text-foreground">
+            <div className="flex justify-end animate-stagger-in">
+              <div className="max-w-2xl px-4 py-3 rounded-2xl bg-primary/10 border border-primary/20 text-sm text-foreground hover-lift">
                 {lastQuestion}
               </div>
             </div>
