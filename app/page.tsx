@@ -283,15 +283,15 @@ export default function HomePage() {
 
           <div className="flex items-center gap-2">
             {currentThreadId && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="gap-1.5 text-xs h-8"
-                    onClick={currentShareToken ? handleStopSharing : handleShare}
-                    disabled={isSharing}
-                  >
+<Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="gap-1.5 text-xs h-8 hover-scale hover-lift"
+                  onClick={currentShareToken ? handleStopSharing : handleShare}
+                  disabled={isSharing}
+                >
                     {currentShareToken ? (
                       <>
                         <Link className="w-3.5 h-3.5" />
