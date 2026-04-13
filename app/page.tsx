@@ -331,7 +331,7 @@ export default function HomePage() {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="w-8 h-8"
+                  className="w-8 h-8 hover-scale hover-lift"
                   onClick={() => setSettingsOpen(true)}
                 >
                   <Settings className="w-4 h-4" />
