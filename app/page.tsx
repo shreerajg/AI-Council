@@ -316,7 +316,7 @@ export default function HomePage() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="gap-1.5 text-xs h-8"
+                    className="gap-1.5 text-xs h-8 hover-scale hover-lift"
                     onClick={handleExportMarkdown}
                   >
                     <FileText className="w-3.5 h-3.5" />
