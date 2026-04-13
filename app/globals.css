@@ -371,4 +371,166 @@
     background: hsl(var(--accent));
     font-weight: 600;
   }
+
+  /* New animations */
+  .animate-in {
+    animation: animateIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes animateIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .animate-stagger-in {
+    animation: staggerIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+
+  @keyframes staggerIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-accordion-down {
+    animation: accordionDown 0.3s ease-out;
+  }
+
+  @keyframes accordionDown {
+    from { height: 0; opacity: 0; }
+    to { height: var(--radix-accordion-content-height); opacity: 1; }
+  }
+
+  .animate-accordion-up {
+    animation: accordionUp 0.3s ease-out;
+  }
+
+  @keyframes accordionUp {
+    from { height: var(--radix-accordion-content-height); opacity: 1; }
+    to { height: 0; opacity: 0; }
+  }
+
+  .animate-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .animate-ripple::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.3) 0%, transparent 70%);
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  .animate-ripple:active::after {
+    animation: ripple 0.6s ease-out;
+  }
+
+  @keyframes ripple {
+    from { transform: scale(0); opacity: 1; }
+    to { transform: scale(2); opacity: 0; }
+  }
+
+  .animate-wiggle {
+    animation: wiggle 0.5s ease-in-out;
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+
+  .animate-bounce-subtle {
+    animation: bounceSubtle 1s ease-in-out infinite;
+  }
+
+  @keyframes bounceSubtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .animate-skeleton-pulse {
+    animation: skeletonPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes skeletonPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.7; }
+  }
+
+  .animate-gradient-x {
+    background-size: 200% 200%;
+    animation: gradientX 3s ease infinite;
+  }
+
+  @keyframes gradientX {
+    0%, 100% { background-position: left center; }
+    50% { background-position: right center; }
+  }
+
+  .animate-shine {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .animate-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--primary) / 0.1),
+      transparent
+    );
+    animation: shine 2s infinite;
+  }
+
+  @keyframes shine {
+    from { left: -50%; }
+    to { left: 150%; }
+  }
+
+  /* Interactive hover effects */
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px hsl(var(--primary) / 0.12);
+  }
+
+  .hover-scale {
+    transition: transform 0.2s ease;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+
+  .hover-glow {
+    transition: box-shadow 0.3s ease;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.2);
+  }
+
+  /* Loading states */
+  .loading-dots::after {
+    content: '';
+    animation: loadingDots 1.5s infinite;
+  }
+
+  @keyframes loadingDots {
+    0% { content: '.'; }
+    33% { content: '..'; }
+    66% { content: '...'; }
+  }
 }
