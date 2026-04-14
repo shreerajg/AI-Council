@@ -53,9 +53,19 @@
       radial-gradient(circle at 20% 80%, hsl(180 60% 30% / 0.08), transparent);
     background-attachment: fixed;
     color: hsl(var(--foreground));
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono), 'JetBrains Mono', 'Fira Code', monospace;
   }
 
   ::-webkit-scrollbar {
