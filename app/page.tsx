@@ -357,18 +357,17 @@ export default function HomePage() {
                 <div className="absolute -top-2 -left-2 w-5 h-5 rounded-full bg-primary/20 animate-ping" />
               </div>
               <div className="space-y-2">
-                <h1 className="text-4xl font-bold text-foreground tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent animate-pulse-glow">AI Council</h1>
-                <p className="text-muted-foreground max-w-md leading-relaxed">
+                <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-white via-primary/90 to-primary/60 bg-clip-text text-transparent animate-pulse-glow font-display">
+                  AI Council
+                </h1>
+                <p className="text-muted-foreground max-w-md leading-relaxed text-lg font-light">
                   Ask one question, receive parallel answers from multiple AI models.
                   Compare perspectives from GPT-4, Gemini, Claude, and more.
                 </p>
               </div>
-              <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2 bg-card/50 px-4 py-2 rounded-full border border-border/50 hover:border-primary/30 transition-colors">
-                <kbd className="px-2.5 py-1 rounded-md border border-border bg-accent font-mono text-foreground shadow-sm hover:scale-105 transition-transform">
-                  Ctrl
-                </kbd>
-                <span className="text-muted-foreground/60">+</span>
-                <kbd className="px-2.5 py-1 rounded-md border border-border bg-accent font-mono text-foreground shadow-sm hover:scale-105 transition-transform">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground mt-2 bg-card/50 px-5 py-2.5 rounded-full border border-border/50 hover:border-primary/30 transition-colors">
+                <span className="text-primary/70">⌘</span>
+                <kbd className="px-3 py-1 rounded-md border border-border bg-accent font-mono text-foreground shadow-sm hover:scale-105 transition-transform text-xs">
                   K
                 </kbd>
                 <span className="text-muted-foreground/60">to focus</span>
