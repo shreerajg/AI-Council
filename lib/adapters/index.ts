@@ -2,29 +2,42 @@ import { createOpenAICompatAdapter } from "./openai-compat";
 import { createPollinationsAdapter } from "./pollinations";
 import type { ModelAdapter } from "./types";
 
+const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY || "";
+
+const MODEL_CONFIG: Record<string, { actualModel: string; apiKey: string }> = {
+    "nvidia-llama-3-3": {
+        actualModel: "meta/llama-3.3-70b-instruct",
+        apiKey: NVIDIA_API_KEY,
+    },
+    "nvidia-llama": {
+        actualModel: "meta/llama-3.3-70b-instruct",
+        apiKey: NVIDIA_API_KEY,
+    },
+    "nvidia-mistral-large": {
+        actualModel: "mistralai/mistral-large-3-675b-instruct-2512",
+        apiKey: NVIDIA_API_KEY,
+    },
+};
+
 export function getAdapter(modelId: string): ModelAdapter {
     if (modelId.startsWith("pollinations-")) {
         return createPollinationsAdapter(modelId);
     }
 
-    // NVIDIA NIM Models
     if (modelId.startsWith("nvidia-")) {
-        let actualModel = "";
-        let apiKey = ""; // Default NVIDIA
-
-        if (modelId === "nvidia-llama-3-3" || modelId === "nvidia-llama") {
-            actualModel = "meta/llama-3.3-70b-instruct";
-            apiKey = "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";
-        } else if (modelId === "nvidia-mistral-large") {
-            actualModel = "mistralai/mistral-large-3-675b-instruct-2512";
-            apiKey = "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";
+        const config = MODEL_CONFIG[modelId];
+        if (!config) {
+            throw new Error(`Unknown NVIDIA model: ${modelId}`);
+        }
+        if (!config.apiKey) {
+            throw new Error(`NVIDIA API key not configured. Set NVIDIA_API_KEY in .env`);
         }
 
         return createOpenAICompatAdapter(
             modelId,
             "https://integrate.api.nvidia.com/v1",
-            apiKey,
-            actualModel
+            config.apiKey,
+            config.actualModel
         );
     }
 
