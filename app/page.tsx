@@ -7,6 +7,8 @@ import { AVAILABLE_MODELS } from "@/lib/adapters/types";
 import { CouncilGrid } from "@/components/council/CouncilGrid";
 import { SynthesisCard } from "@/components/council/SynthesisCard";
 import { ExpandedModelDialog } from "@/components/council/ModelCard";
+import { SnapshotsPanel } from "@/components/council/SnapshotsPanel";
+import { DebateModeButton } from "@/components/council/DebateModeButton";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SettingsDrawer } from "@/components/layout/SettingsDrawer";
 import { Button } from "@/components/ui/button";
@@ -283,7 +285,10 @@ export default function HomePage() {
 
           <div className="flex items-center gap-2">
             {currentThreadId && (
-<Tooltip>
+              <>
+                <SnapshotsPanel threadId={currentThreadId} />
+                <DebateModeButton threadId={currentThreadId} />
+                <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   size="sm"
@@ -309,6 +314,7 @@ export default function HomePage() {
                   {currentShareToken ? "Stop sharing this thread" : "Share this thread publicly"}
                 </TooltipContent>
               </Tooltip>
+              </>
             )}
             {anyDone && (
               <Tooltip>
