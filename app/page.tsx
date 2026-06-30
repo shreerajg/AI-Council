@@ -135,6 +135,8 @@ export default function HomePage() {
             latencyMs: r.latencyMs || undefined,
             usage: r.usage ? JSON.parse(r.usage) : undefined,
             citations: r.citations ? JSON.parse(r.citations) : undefined,
+            runId: r.id,
+            rating: r.rating,
           };
         }
 
