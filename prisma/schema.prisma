@@ -66,6 +66,7 @@ model Thread {
   user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
   messages  Message[]
   modelRuns ModelRun[]
+  snapshots Snapshot[]
 }
 
 model Message {
@@ -92,4 +93,13 @@ model ModelRun {
   isSynthesis  Boolean  @default(false)
   createdAt    DateTime @default(now())
   thread       Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+}
+
+model Snapshot {
+  id        String   @id @default(cuid())
+  threadId  String
+  name      String   @default("Saved Snapshot")
+  responses String   // JSON serialized array of selected model responses
+  createdAt DateTime @default(now())
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
 }
