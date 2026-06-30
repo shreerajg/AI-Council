@@ -100,6 +100,7 @@ export function ModelCard({ modelId, onRegenerate }: ModelCardProps) {
     const { currentRuns, setExpandedModel } = useCouncilStore();
     const run = currentRuns[modelId];
     const [copied, setCopied] = useState(false);
+    const [localRating, setLocalRating] = useState<number | null | undefined>(run?.rating);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll removed due to severe performance degradation during multi-model parallel Markdown rendering.
@@ -116,6 +117,22 @@ export function ModelCard({ modelId, onRegenerate }: ModelCardProps) {
         setCopied(true);
         toast.success("Copied to clipboard");
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleRate = async (value: 1 | -1) => {
+        if (!run?.runId) return;
+        const newRating = localRating === value ? 0 : value;
+        setLocalRating(newRating === 0 ? null : newRating);
+        try {
+            await fetch(`/api/runs/${run.runId}/rating`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ rating: newRating }),
+            });
+        } catch {
+            setLocalRating(run.rating);
+            toast.error("Failed to save rating");
+        }
     };
 
     const costEstimate = run?.usage
