@@ -91,6 +91,7 @@ model ModelRun {
   finishReason String?
   error        String?
   isSynthesis  Boolean  @default(false)
+  rating       Int?     // 1 for upvote, -1 for downvote, null for no rating
   createdAt    DateTime @default(now())
   thread       Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
 }
