@@ -318,20 +318,23 @@ export default function HomePage() {
               </>
             )}
             {anyDone && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="gap-1.5 text-xs h-8 hover-scale hover-lift"
-                    onClick={handleExportMarkdown}
-                  >
-                    <FileText className="w-3.5 h-3.5" />
-                    Export MD
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Export to Markdown</TooltipContent>
-              </Tooltip>
+              <>
+                <NotionExportButton question={lastQuestion} />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="gap-1.5 text-xs h-8 hover-scale hover-lift"
+                      onClick={handleExportMarkdown}
+                    >
+                      <FileText className="w-3.5 h-3.5" />
+                      Export MD
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Export to Markdown</TooltipContent>
+                </Tooltip>
+              </>
             )}
             <Tooltip>
               <TooltipTrigger asChild>
