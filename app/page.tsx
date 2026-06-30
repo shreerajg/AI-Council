@@ -9,6 +9,7 @@ import { SynthesisCard } from "@/components/council/SynthesisCard";
 import { ExpandedModelDialog } from "@/components/council/ModelCard";
 import { SnapshotsPanel } from "@/components/council/SnapshotsPanel";
 import { DebateModeButton } from "@/components/council/DebateModeButton";
+import { NotionExportButton } from "@/components/council/NotionExportButton";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SettingsDrawer } from "@/components/layout/SettingsDrawer";
 import { Button } from "@/components/ui/button";
