@@ -12,6 +12,8 @@ export interface ModelRun {
     latencyMs?: number;
     usage?: { promptTokens: number; completionTokens: number; totalTokens: number };
     citations?: { url: string; title?: string }[];
+    runId?: string;
+    rating?: number | null;
 }
 
 export interface Thread {
