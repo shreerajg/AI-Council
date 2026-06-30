@@ -10,6 +10,7 @@ import { ExpandedModelDialog } from "@/components/council/ModelCard";
 import { SnapshotsPanel } from "@/components/council/SnapshotsPanel";
 import { DebateModeButton } from "@/components/council/DebateModeButton";
 import { NotionExportButton } from "@/components/council/NotionExportButton";
+import { LeaderboardButton } from "@/components/council/LeaderboardButton";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SettingsDrawer } from "@/components/layout/SettingsDrawer";
 import { Button } from "@/components/ui/button";
@@ -287,6 +288,7 @@ export default function HomePage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <LeaderboardButton />
             {currentThreadId && (
               <>
                 <SnapshotsPanel threadId={currentThreadId} />

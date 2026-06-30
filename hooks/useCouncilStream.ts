@@ -4,8 +4,6 @@ import { useCallback, useRef, useEffect } from "react";
 import { useCouncilStore } from "@/store/councilStore";
 import { toast } from "sonner";
 
-const RECONNECT_DELAY_MS = 2000;
-
 export function useCouncilStream() {
     const store = useCouncilStore();
     const eventSourceRef = useRef<EventSource | null>(null);
@@ -15,15 +13,19 @@ export function useCouncilStream() {
     const threadIdRef = useRef<string>("");
 
     useEffect(() => {
+        const eventSource = eventSourceRef.current;
+        const timeout = timeoutRef.current;
+        const reconnectTimeout = reconnectTimeoutRef.current;
+
         return () => {
-            if (eventSourceRef.current) {
-                eventSourceRef.current.close();
+            if (eventSource) {
+                eventSource.close();
             }
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
+            if (timeout) {
+                clearTimeout(timeout);
             }
-            if (reconnectTimeoutRef.current) {
-                clearTimeout(reconnectTimeoutRef.current);
+            if (reconnectTimeout) {
+                clearTimeout(reconnectTimeout);
             }
         };
     }, []);
@@ -117,8 +119,7 @@ export function useCouncilStream() {
 
                 es.addEventListener("done", (e) => {
                     const data = JSON.parse(e.data);
-                    store.setRunStatus(data.modelId, "done");
-                    store.setRunLatency(data.modelId, data.latencyMs);
+                    store.setRunDone(data.modelId, data.latencyMs, data.runId);
                 });
 
                 es.addEventListener("model_error", (e) => {

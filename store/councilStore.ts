@@ -54,7 +54,7 @@ export interface CouncilStore {
     setRunStatus: (modelId: string, status: ModelStatus) => void;
     appendToken: (modelId: string, text: string) => void;
     setRunUsage: (modelId: string, usage: ModelRun["usage"]) => void;
-    setRunLatency: (modelId: string, latencyMs: number) => void;
+    setRunDone: (modelId: string, latencyMs: number, runId?: string) => void;
     setRunError: (modelId: string, error: string) => void;
     setRunCitations: (modelId: string, citations: ModelRun["citations"]) => void;
     clearRuns: () => void;
@@ -141,11 +141,11 @@ export const useCouncilStore = create<CouncilStore>()(
                         [modelId]: { ...(s.currentRuns[modelId] || { modelId, output: "" }), usage },
                     },
                 })),
-            setRunLatency: (modelId, latencyMs) =>
+            setRunDone: (modelId, latencyMs, runId) =>
                 set((s) => ({
                     currentRuns: {
                         ...s.currentRuns,
-                        [modelId]: { ...(s.currentRuns[modelId] || { modelId, output: "" }), latencyMs },
+                        [modelId]: { ...(s.currentRuns[modelId] || { modelId, output: "" }), status: "done", latencyMs, runId },
                     },
                 })),
             setRunError: (modelId, error) =>

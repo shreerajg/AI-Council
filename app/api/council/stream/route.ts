@@ -131,7 +131,7 @@ export async function GET(req: NextRequest) {
                             }
                             break;
                         case "done":
-                            controller.enqueue(encoder.encode(formatSSE("done", { modelId: event.modelId, latencyMs: event.latencyMs })));
+                            controller.enqueue(encoder.encode(formatSSE("done", { modelId: event.modelId, latencyMs: event.latencyMs, runId: runMap[event.modelId] })));
                             // Persist output
                             if (runMap[event.modelId]) {
                                 prisma.modelRun.update({

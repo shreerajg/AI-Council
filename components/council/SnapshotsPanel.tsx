@@ -25,7 +25,7 @@ export function SnapshotsPanel({ threadId }: { threadId: string }) {
     const [isOpen, setIsOpen] = useState(false);
     const [viewSnapshot, setViewSnapshot] = useState<Snapshot | null>(null);
 
-    const { data: snapshots = [], isLoading } = useQuery({
+    const { data: snapshots = [] } = useQuery({
         queryKey: ["snapshots", threadId],
         queryFn: async () => {
             const res = await fetch(`/api/snapshots/${threadId}`);

@@ -279,7 +279,7 @@ export function ModelCard({ modelId, onRegenerate }: ModelCardProps) {
             )}
 
             {/* Footer Metadata */}
-            {(run?.latencyMs || run?.usage) && (
+            {(run?.latencyMs || run?.usage || run?.runId) && (
                 <div className="px-4 pb-3 pt-1 flex items-center gap-3 text-xs text-muted-foreground border-t border-border/50 mt-auto">
                     {run.latencyMs && (
                         <span className="flex items-center gap-1">
@@ -294,6 +294,42 @@ export function ModelCard({ modelId, onRegenerate }: ModelCardProps) {
                     )}
                     {costEstimate && (
                         <span>≈${costEstimate}</span>
+                    )}
+                    {run?.runId && run.status === "done" && (
+                        <div className="ml-auto flex items-center gap-1">
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        className={cn(
+                                            "w-6 h-6 hover:text-emerald-400 transition-colors",
+                                            localRating === 1 && "text-emerald-400"
+                                        )}
+                                        onClick={() => handleRate(1)}
+                                    >
+                                        <ThumbsUp className="w-3.5 h-3.5" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Upvote</TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        className={cn(
+                                            "w-6 h-6 hover:text-red-400 transition-colors",
+                                            localRating === -1 && "text-red-400"
+                                        )}
+                                        onClick={() => handleRate(-1)}
+                                    >
+                                        <ThumbsDown className="w-3.5 h-3.5" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Downvote</TooltipContent>
+                            </Tooltip>
+                        </div>
                     )}
                 </div>
             )}
