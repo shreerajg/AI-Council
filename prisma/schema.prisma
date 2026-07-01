@@ -67,6 +67,8 @@ model Thread {
   messages  Message[]
   modelRuns ModelRun[]
   snapshots Snapshot[]
+  workflows Workflow[]
+  factChecks FactCheck[]
 }
 
 model Message {
@@ -137,7 +139,7 @@ model FactCheck {
   threadId    String
   modelRunId  String?  // optional, can be linked to a model run being fact-checked
   claim       String
-  checkers    String[] // array of checker model IDs
+  checkers    String   // JSON array of checker model IDs
   results     String   // JSON serialized array of fact-check results
   confidence  Float?   // overall confidence score
   isVerified  Boolean  @default(false)
