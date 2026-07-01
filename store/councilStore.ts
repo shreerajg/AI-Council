@@ -23,6 +23,25 @@ export interface Thread {
     updatedAt: string;
 }
 
+export interface FactCheckResult {
+    claim: string;
+    checkerModel: string;
+    verdict: "true" | "false" | "uncertain";
+    reasoning: string;
+    confidence: number;
+}
+
+export interface FactCheckState {
+    isChecking: boolean;
+    results: FactCheckResult[][];
+}
+
+export interface WorkflowState {
+    isExecuting: boolean;
+    currentStep: number;
+    outputs: Record<number, string>;
+}
+
 export interface CouncilStore {
     // Thread management
     threads: Thread[];
@@ -77,6 +96,20 @@ export interface CouncilStore {
     // Share state
     currentShareToken: string | null;
     setCurrentShareToken: (token: string | null) => void;
+
+    // Workflow state
+    workflowState: WorkflowState;
+    setWorkflowExecuting: (executing: boolean) => void;
+    setWorkflowStep: (step: number) => void;
+    setWorkflowStepOutput: (step: number, text: string) => void;
+    clearWorkflowState: () => void;
+
+    // Fact Check state
+    factCheckState: FactCheckState;
+    setFactCheckChecking: (checking: boolean) => void;
+    setFactCheckResults: (results: FactCheckResult[][]) => void;
+    addFactCheckResult: (claimIndex: number, result: FactCheckResult) => void;
+    clearFactCheckState: () => void;
 }
 
 export const useCouncilStore = create<CouncilStore>()(
