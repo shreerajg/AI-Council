@@ -104,3 +104,43 @@ model Snapshot {
   createdAt DateTime @default(now())
   thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
 }
+
+model Workflow {
+  id         String     @id @default(cuid())
+  threadId   String
+  name       String
+  steps      WorkflowStep[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  thread     Thread     @relation(fields: [threadId], references: [id], onDelete: Cascade)
+}
+
+model WorkflowStep {
+  id           String   @id @default(cuid())
+  workflowId   String
+  stepIndex    Int
+  type         String   // "researcher", "writer", "critic", "synthesizer", "code_exec"
+  modelId      String
+  prompt       String?
+  inputStepId  String?
+  output       String?  // stores step output
+  latencyMs    Int?
+  usage        String?
+  error        String?
+  workflow     Workflow   @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  
+  @@unique([workflowId, stepIndex])
+}
+
+model FactCheck {
+  id          String   @id @default(cuid())
+  threadId    String
+  modelRunId  String?  // optional, can be linked to a model run being fact-checked
+  claim       String
+  checkers    String[] // array of checker model IDs
+  results     String   // JSON serialized array of fact-check results
+  confidence  Float?   // overall confidence score
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  thread      Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+}
