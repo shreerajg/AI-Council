@@ -4,10 +4,10 @@ import { auth } from "@/lib/auth";
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { threadId: string } }
+    { params }: { params: Promise<{ threadId: string }> }
 ) {
     try {
-        const { threadId } = params;
+        const { threadId } = await params;
         const session = await auth();
         
         const thread = await prisma.thread.findUnique({

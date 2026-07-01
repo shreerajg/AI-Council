@@ -11,14 +11,19 @@ import { SnapshotsPanel } from "@/components/council/SnapshotsPanel";
 import { DebateModeButton } from "@/components/council/DebateModeButton";
 import { NotionExportButton } from "@/components/council/NotionExportButton";
 import { LeaderboardButton } from "@/components/council/LeaderboardButton";
+import { WorkflowBuilder } from "@/components/council/WorkflowBuilder";
+import { FactCheckPanel } from "@/components/council/FactCheckPanel";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SettingsDrawer } from "@/components/layout/SettingsDrawer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useCouncilStream } from "@/hooks/useCouncilStream";
+import { useWorkflowStream } from "@/hooks/useWorkflowStream";
+import { useFactCheckStream } from "@/hooks/useFactCheckStream";
 import { generateMarkdownExport, downloadMarkdown } from "@/lib/export";
 import { toast } from "sonner";
+import type { WorkflowStep } from "@/lib/workflow";
 import {
   Send,
   Square,
@@ -69,6 +74,8 @@ export default function HomePage() {
     setSynthesis,
     currentShareToken,
     setCurrentShareToken,
+    workflowState,
+    factCheckState,
   } = useCouncilStore();
 
   const [input, setInput] = useState("");
@@ -80,6 +87,8 @@ export default function HomePage() {
   const qc = useQueryClient();
 
   const { startStream, stopStream } = useCouncilStream();
+  const { startWorkflow, stopWorkflow } = useWorkflowStream();
+  const { startFactCheck, stopFactCheck } = useFactCheckStream();
 
   // Keyboard shortcut: Ctrl+K / Cmd+K to focus input
   useEffect(() => {
@@ -216,6 +225,27 @@ export default function HomePage() {
 
   const anyDone = selectedModels.some((m) => currentRuns[m]?.status === "done");
 
+  const handleWorkflowExecute = async (name: string, steps: WorkflowStep[], input: string) => {
+    try {
+      let threadId = currentThreadId;
+      if (!threadId) {
+        const thread = await createMutation.mutateAsync(input);
+        threadId = thread.id;
+      }
+      await startWorkflow(threadId!, name, steps, input);
+    } catch {
+      toast.error("Failed to start workflow");
+    }
+  };
+
+  const handleFactCheck = async (claims: string[], checkers: string[]) => {
+    if (!currentThreadId) {
+      toast.error("Please start a thread first");
+      return;
+    }
+    await startFactCheck(currentThreadId, claims, checkers);
+  };
+
   const handleShare = async () => {
     if (!currentThreadId) {
       toast.error("No thread to share");
@@ -291,6 +321,17 @@ export default function HomePage() {
             <LeaderboardButton />
             {currentThreadId && (
               <>
+                <WorkflowBuilder 
+                  threadId={currentThreadId}
+                  onExecute={handleWorkflowExecute}
+                  isExecuting={workflowState.isExecuting}
+                />
+                <FactCheckPanel
+                  threadId={currentThreadId}
+                  onFactCheck={handleFactCheck}
+                  isChecking={factCheckState.isChecking}
+                  results={factCheckState.results}
+                />
                 <SnapshotsPanel threadId={currentThreadId} />
                 <DebateModeButton threadId={currentThreadId} />
                 <Tooltip>
