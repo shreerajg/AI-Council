@@ -212,6 +212,59 @@ export const useCouncilStore = create<CouncilStore>()(
             
             currentShareToken: null,
             setCurrentShareToken: (token) => set({ currentShareToken: token }),
+
+            workflowState: {
+                isExecuting: false,
+                currentStep: 0,
+                outputs: {},
+            },
+            setWorkflowExecuting: (executing) =>
+                set((s) => ({ workflowState: { ...s.workflowState, isExecuting: executing } })),
+            setWorkflowStep: (step) =>
+                set((s) => ({ workflowState: { ...s.workflowState, currentStep: step } })),
+            setWorkflowStepOutput: (step, text) =>
+                set((s) => {
+                    const existing = s.workflowState.outputs[step] || "";
+                    return {
+                        workflowState: {
+                            ...s.workflowState,
+                            outputs: { ...s.workflowState.outputs, [step]: existing + text },
+                        },
+                    };
+                }),
+            clearWorkflowState: () =>
+                set({
+                    workflowState: {
+                        isExecuting: false,
+                        currentStep: 0,
+                        outputs: {},
+                    },
+                }),
+
+            factCheckState: {
+                isChecking: false,
+                results: [],
+            },
+            setFactCheckChecking: (checking) =>
+                set((s) => ({ factCheckState: { ...s.factCheckState, isChecking: checking } })),
+            setFactCheckResults: (results) =>
+                set((s) => ({ factCheckState: { ...s.factCheckState, results } })),
+            addFactCheckResult: (claimIndex, result) =>
+                set((s) => {
+                    const newResults = [...s.factCheckState.results];
+                    if (!newResults[claimIndex]) {
+                        newResults[claimIndex] = [];
+                    }
+                    newResults[claimIndex].push(result);
+                    return { factCheckState: { ...s.factCheckState, results: newResults } };
+                }),
+            clearFactCheckState: () =>
+                set({
+                    factCheckState: {
+                        isChecking: false,
+                        results: [],
+                    },
+                }),
         }),
         {
             name: "council-store",
