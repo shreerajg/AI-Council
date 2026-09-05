@@ -15,6 +15,7 @@ import { WorkflowBuilder } from "@/components/council/WorkflowBuilder";
 import { FactCheckPanel } from "@/components/council/FactCheckPanel";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SettingsDrawer } from "@/components/layout/SettingsDrawer";
+import { FadeIn, SlideInFromBottom } from "@/components/ui/motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -401,7 +402,7 @@ export default function HomePage() {
         <div className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full" id="council-content" ref={gridRef}>
           {/* Empty State */}
           {!isStreaming && Object.keys(currentRuns).length === 0 && (
-            <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-6">
+            <FadeIn duration={0.8} className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-6">
               <div className="relative animate-float">
                 <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center animate-pulse-glow shadow-2xl">
                   <Sparkles className="w-12 h-12 text-primary" />
@@ -411,7 +412,7 @@ export default function HomePage() {
                 </div>
                 <div className="absolute -top-2 -left-2 w-5 h-5 rounded-full bg-primary/20 animate-ping" />
               </div>
-              <div className="space-y-2">
+              <SlideInFromBottom delay={0.2} className="space-y-2">
                 <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-white via-primary/90 to-primary/60 bg-clip-text text-transparent animate-pulse-glow font-display">
                   AI Council
                 </h1>
@@ -419,15 +420,15 @@ export default function HomePage() {
                   Ask one question, receive parallel answers from multiple AI models.
                   Compare perspectives from GPT-4, Gemini, Claude, and more.
                 </p>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-muted-foreground mt-2 bg-card/50 px-5 py-2.5 rounded-full border border-border/50 hover:border-primary/30 transition-colors">
+              </SlideInFromBottom>
+              <SlideInFromBottom delay={0.4} className="flex items-center gap-3 text-sm text-muted-foreground mt-2 bg-card/50 px-5 py-2.5 rounded-full border border-border/50 hover:border-primary/30 transition-colors">
                 <span className="text-primary/70">⌘</span>
                 <kbd className="px-3 py-1 rounded-md border border-border bg-accent font-mono text-foreground shadow-sm hover:scale-105 transition-transform text-xs">
                   K
                 </kbd>
                 <span className="text-muted-foreground/60">to focus</span>
-              </div>
-            </div>
+              </SlideInFromBottom>
+            </FadeIn>
           )}
 
           {/* Question Display */}
