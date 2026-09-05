@@ -58,5 +58,8 @@ export const AVAILABLE_MODELS: ModelConfig[] = [
     { id: "pollinations-openai", provider: "pollinations", name: "Pollinations GPT-4o", description: "Free GPT-4o via Pollinations AI", supportsStreaming: true, defaultTemperature: 0.7, defaultMaxTokens: 2048 },
     { id: "pollinations-claude", provider: "pollinations", name: "Pollinations Claude", description: "Free Claude via Pollinations AI", supportsStreaming: true, defaultTemperature: 0.7, defaultMaxTokens: 2048 },
     { id: "pollinations-llama", provider: "pollinations", name: "Pollinations Llama", description: "Free Llama via Pollinations AI", supportsStreaming: true, defaultTemperature: 0.7, defaultMaxTokens: 2048 },
-    { id: "pollinations-mistral", provider: "pollinations", name: "Pollinations Mistral", description: "Free Mistral via Pollinations AI", supportsStreaming: true, defaultTemperature: 0.7, defaultMaxTokens: 2048 }
+    { id: "pollinations-mistral", provider: "pollinations", name: "Pollinations Mistral", description: "Free Mistral via Pollinations AI", supportsStreaming: true, defaultTemperature: 0.7, defaultMaxTokens: 2048 },
+    { id: "pollinations-gemini", provider: "pollinations", name: "Pollinations Gemini", description: "Free Gemini via Pollinations AI", supportsStreaming: true, defaultTemperature: 0.7, defaultMaxTokens: 2048 },
+    { id: "pollinations-deepseek", provider: "pollinations", name: "Pollinations DeepSeek", description: "Free DeepSeek via Pollinations AI", supportsStreaming: true, defaultTemperature: 0.7, defaultMaxTokens: 2048 }
 ];
+
