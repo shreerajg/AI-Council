@@ -24,6 +24,8 @@ import { useCouncilStream } from "@/hooks/useCouncilStream";
 import { useWorkflowStream } from "@/hooks/useWorkflowStream";
 import { useFactCheckStream } from "@/hooks/useFactCheckStream";
 import { generateMarkdownExport, downloadMarkdown } from "@/lib/export";
+import { FileUpload, type AttachedFile } from "@/components/council/FileUpload";
+import { extractTextFromPDF } from "@/lib/pdf-parser";
 import { toast } from "sonner";
 import type { WorkflowStep } from "@/lib/workflow";
 import {
@@ -84,6 +86,7 @@ export default function HomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [lastQuestion, setLastQuestion] = useState("");
   const [isSharing, setIsSharing] = useState(false);
+  const [attachments, setAttachments] = useState<AttachedFile[]>([]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const qc = useQueryClient();
@@ -173,29 +176,67 @@ export default function HomePage() {
   });
 
   const handleSubmit = useCallback(async () => {
-    const message = input.trim();
-    if (!message || isStreaming) return;
+    let message = input.trim();
+    if (!message && attachments.length === 0) return;
+    if (isStreaming) return;
     if (selectedModels.length === 0) {
       toast.error("Select at least one model in Settings");
       setSettingsOpen(true);
       return;
     }
 
-    setLastQuestion(message);
-    setInput("");
-
     try {
+      // Process attachments
+      for (let i = 0; i < attachments.length; i++) {
+          const att = attachments[i];
+          if (att.type === "pdf" && !att.textContext) {
+              const text = await extractTextFromPDF(att.file);
+              attachments[i].textContext = text;
+          } else if (att.type === "image" && !att.textContext) {
+              // Convert image to base64
+              const reader = new FileReader();
+              const base64 = await new Promise<string>((resolve) => {
+                  reader.onloadend = () => resolve(reader.result as string);
+                  reader.readAsDataURL(att.file);
+              });
+              attachments[i].textContext = base64;
+          }
+      }
+
+      // Build final message
+      let finalMessage = message;
+      const pdfs = attachments.filter(a => a.type === "pdf");
+      const images = attachments.filter(a => a.type === "image");
+
+      if (pdfs.length > 0) {
+          finalMessage += "\n\n[Attached Documents]\n";
+          pdfs.forEach(pdf => {
+              finalMessage += `--- ${pdf.file.name} ---\n${pdf.textContext}\n`;
+          });
+      }
+
+      if (images.length > 0) {
+          images.forEach(img => {
+              finalMessage += `\n![${img.file.name}](${img.textContext})`;
+          });
+      }
+
+      setLastQuestion(finalMessage);
+      setInput("");
+      setAttachments([]);
+
       let threadId = currentThreadId;
       if (!threadId) {
-        const thread = await createMutation.mutateAsync(message);
+        const thread = await createMutation.mutateAsync(finalMessage);
         threadId = thread.id;
       }
-      await startStream(message, threadId!);
-    } catch {
+      await startStream(finalMessage, threadId!);
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to start stream");
       setIsStreaming(false);
     }
-  }, [input, isStreaming, selectedModels, currentThreadId, createMutation, startStream, setSettingsOpen, setIsStreaming]);
+  }, [input, isStreaming, selectedModels, currentThreadId, createMutation, startStream, setSettingsOpen, setIsStreaming, attachments]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -482,7 +523,12 @@ export default function HomePage() {
                   rows={1}
                 />
               </div>
-              <div className="flex gap-1.5 pb-1 pr-1">
+              <div className="flex gap-1.5 pb-1 pr-1 items-center relative">
+                <FileUpload 
+                  attachments={attachments}
+                  onAttach={(file) => setAttachments(prev => [...prev, file])}
+                  onRemove={(idx) => setAttachments(prev => prev.filter((_, i) => i !== idx))}
+                />
                 {isStreaming ? (
                   <Button
                     size="icon"
@@ -497,7 +543,7 @@ export default function HomePage() {
                      size="icon"
                      className="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all hover:scale-110 hover:rotate-12 shadow-lg shadow-primary/25 active:scale-95"
                      onClick={handleSubmit}
-                     disabled={!input.trim() || selectedModels.length === 0}
+                     disabled={(!input.trim() && attachments.length === 0) || selectedModels.length === 0}
                    >
                      <Send className="w-4 h-4 transition-transform" />
                    </Button>
