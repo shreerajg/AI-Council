@@ -15,6 +15,7 @@ import { WorkflowBuilder } from "@/components/council/WorkflowBuilder";
 import { FactCheckPanel } from "@/components/council/FactCheckPanel";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SettingsDrawer } from "@/components/layout/SettingsDrawer";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { FadeIn, SlideInFromBottom } from "@/components/ui/motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
