@@ -396,6 +396,7 @@ export default function HomePage() {
               </TooltipTrigger>
               <TooltipContent>Settings & Model Selection</TooltipContent>
             </Tooltip>
+            <ThemeToggle />
           </div>
         </div>
 
