@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { MarkdownRenderer } from "@/components/ui/markdown";
 import { useCouncilStore } from "@/store/councilStore";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -116,7 +115,7 @@ export function SynthesisCard({ threadId }: { threadId: string }) {
                     ) : synthesis ? (
                         <ScrollArea className="max-h-64">
                             <div className="prose-council">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{synthesis}</ReactMarkdown>
+                                <MarkdownRenderer content={synthesis as string} />
                             </div>
                         </ScrollArea>
                     ) : (

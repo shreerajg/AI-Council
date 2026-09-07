@@ -8,8 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Camera, Bookmark } from "lucide-react";
 import { toast } from "sonner";
 import { useCouncilStore } from "@/store/councilStore";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { MarkdownRenderer } from "@/components/ui/markdown";
 
 interface Snapshot {
     id: string;
@@ -137,9 +136,7 @@ export function SnapshotsPanel({ threadId }: { threadId: string }) {
                                     <div key={modelId} className="border rounded-xl p-4">
                                         <h3 className="font-semibold text-sm mb-3 text-primary">{modelId}</h3>
                                         <div className="prose-council">
-                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                {content as string}
-                                            </ReactMarkdown>
+                                            <MarkdownRenderer content={content as string} />
                                         </div>
                                     </div>
                                 ))}
