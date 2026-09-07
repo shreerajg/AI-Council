@@ -106,6 +106,7 @@ export interface CouncilStore {
 
     // Fact Check state
     factCheckState: FactCheckState;
+    setFactCheckChecking: (checking: boolean) => void;
     setFactCheckResults: (results: FactCheckResult[][]) => void;
     addFactCheckResult: (claimIndex: number, result: FactCheckResult) => void;
     clearFactCheckState: () => void;
