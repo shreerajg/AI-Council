@@ -39,6 +39,7 @@ import {
   X,
   Share,
   Link,
+  Bookmark,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -80,6 +81,8 @@ export default function HomePage() {
     setCurrentShareToken,
     workflowState,
     factCheckState,
+    savedPrompts,
+    addSavedPrompt,
   } = useCouncilStore();
 
   const [input, setInput] = useState("");
@@ -529,6 +532,24 @@ export default function HomePage() {
                   onAttach={(file) => setAttachments(prev => [...prev, file])}
                   onRemove={(idx) => setAttachments(prev => prev.filter((_, i) => i !== idx))}
                 />
+                {input.trim().length > 0 && !savedPrompts.includes(input.trim()) && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="w-9 h-9 shrink-0 rounded-xl transition-all hover:scale-110 active:scale-95 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                        onClick={() => {
+                          addSavedPrompt(input.trim());
+                          toast.success("Prompt saved!");
+                        }}
+                      >
+                        <Bookmark className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Save this prompt</TooltipContent>
+                  </Tooltip>
+                )}
                 {isStreaming ? (
                   <Button
                     size="icon"
