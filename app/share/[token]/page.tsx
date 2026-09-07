@@ -3,8 +3,7 @@
 import { useEffect, useState, use } from "react";
 import Link from "next/link";
 import { Loader2, Sparkles, MessageSquare } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { MarkdownRenderer } from "@/components/ui/markdown";
 import { AVAILABLE_MODELS } from "@/lib/adapters/types";
 
 interface SharedThread {
@@ -117,9 +116,7 @@ export default function SharedThreadPage({ params }: { params: Promise<{ token: 
                     )}
                   </div>
                   <div className="prose prose-sm dark:prose-invert max-w-none">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {run.output || ""}
-                    </ReactMarkdown>
+                    <MarkdownRenderer content={run.output || ""} />
                   </div>
                   {run.error && (
                     <div className="mt-2 text-sm text-destructive bg-destructive/10 rounded-lg p-2">
@@ -139,9 +136,7 @@ export default function SharedThreadPage({ params }: { params: Promise<{ token: 
               <h2 className="text-lg font-medium text-foreground">Synthesis</h2>
             </div>
             <div className="prose dark:prose-invert max-w-none">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {synthesis.output}
-              </ReactMarkdown>
+              <MarkdownRenderer content={synthesis.output} />
             </div>
           </div>
         )}

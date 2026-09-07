@@ -6,8 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useCouncilStore } from "@/store/councilStore";
 import { Swords, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { MarkdownRenderer } from "@/components/ui/markdown";
 
 export function DebateModeButton({ threadId }: { threadId: string }) {
     const { currentRuns, selectedModels, synthesizerModel } = useCouncilStore();
@@ -96,9 +95,7 @@ export function DebateModeButton({ threadId }: { threadId: string }) {
                         </div>
                     ) : (
                         <div className="prose-council">
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {debateOutput || ""}
-                            </ReactMarkdown>
+                            <MarkdownRenderer content={debateOutput || ""} />
                             <div className="mt-8 flex justify-center">
                                 <Button variant="outline" onClick={handleDebate} className="gap-2">
                                     <Swords className="w-4 h-4" /> Run Another Debate

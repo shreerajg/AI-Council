@@ -107,9 +107,13 @@ export interface CouncilStore {
     // Fact Check state
     factCheckState: FactCheckState;
     setFactCheckChecking: (checking: boolean) => void;
-    setFactCheckResults: (results: FactCheckResult[][]) => void;
     addFactCheckResult: (claimIndex: number, result: FactCheckResult) => void;
     clearFactCheckState: () => void;
+
+    // Saved Prompts
+    savedPrompts: string[];
+    addSavedPrompt: (prompt: string) => void;
+    removeSavedPrompt: (index: number) => void;
 }
 
 export const useCouncilStore = create<CouncilStore>()(
@@ -265,6 +269,10 @@ export const useCouncilStore = create<CouncilStore>()(
                         results: [],
                     },
                 }),
+
+            savedPrompts: [],
+            addSavedPrompt: (prompt) => set((s) => ({ savedPrompts: [prompt, ...s.savedPrompts] })),
+            removeSavedPrompt: (index) => set((s) => ({ savedPrompts: s.savedPrompts.filter((_, i) => i !== index) })),
         }),
         {
             name: "council-store",
@@ -274,6 +282,7 @@ export const useCouncilStore = create<CouncilStore>()(
                 concurrencyLimit: s.concurrencyLimit,
                 contextMode: s.contextMode,
                 synthesizerModel: s.synthesizerModel,
+                savedPrompts: s.savedPrompts,
             }),
         }
     )
