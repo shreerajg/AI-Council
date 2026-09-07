@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { MarkdownRenderer } from "@/components/ui/markdown";
 import { useCouncilStore } from "@/store/councilStore";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -250,9 +249,7 @@ export function ModelCard({ modelId, onRegenerate }: ModelCardProps) {
                             run.status === "streaming" && "streaming-cursor"
                         )}
                     >
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {run.output || ""}
-                        </ReactMarkdown>
+                        <MarkdownRenderer content={run.output || ""} />
                     </div>
                 )}
             </div>
@@ -351,9 +348,7 @@ export function ExpandedModelDialog() {
                 </DialogHeader>
                 <div className="flex-1 overflow-y-auto">
                     <div className="prose-council p-1">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {run?.output || "No content"}
-                        </ReactMarkdown>
+                        <MarkdownRenderer content={run?.output || "No content"} />
                     </div>
                 </div>
             </DialogContent>
