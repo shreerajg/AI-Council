@@ -5,9 +5,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { AVAILABLE_MODELS } from "@/lib/adapters/types";
-import { CheckSquare, Settings2, Minus, Plus } from "lucide-react";
+import { CheckSquare, Settings2, Minus, Plus, Key } from "lucide-react";
 
 const MODEL_PROVIDERS = [
     { key: "pollinations", label: "Pollinations (Free)", color: "provider-badge-openai-compat" },
@@ -26,6 +27,8 @@ export function SettingsDrawer() {
         setContextMode,
         synthesizerModel,
         setSynthesizerModel,
+        modelSettings,
+        updateModelSettings,
     } = useCouncilStore();
 
     const modelsByProvider = MODEL_PROVIDERS.map(({ key, label, color }) => ({
@@ -189,6 +192,33 @@ export function SettingsDrawer() {
                                         {synthesizerModel === model.id && <div className="w-1.5 h-1.5 rounded-sm bg-primary-foreground" />}
                                     </div>
                                     {model.name}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <Separator className="bg-border/50" />
+
+                    {/* API Keys */}
+                    <div>
+                        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                            <div className="w-1 h-4 rounded-full bg-primary" />
+                            <Key className="w-4 h-4 text-muted-foreground" />
+                            API Keys
+                        </h3>
+                        <div className="space-y-3">
+                            {MODEL_PROVIDERS.map(({ key, label }) => (
+                                <div key={key} className="space-y-1.5">
+                                    <label className="text-xs font-medium text-muted-foreground">
+                                        {label} API Key
+                                    </label>
+                                    <Input
+                                        type="password"
+                                        placeholder={`Enter ${label} API Key...`}
+                                        className="h-8 text-xs bg-background/50"
+                                        value={modelSettings[key]?.apiKey || ""}
+                                        onChange={(e) => updateModelSettings(key, { apiKey: e.target.value })}
+                                    />
                                 </div>
                             ))}
                         </div>

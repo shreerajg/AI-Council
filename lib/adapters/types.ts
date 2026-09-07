@@ -7,6 +7,7 @@ export interface AdapterSettings {
     temperature?: number;
     maxTokens?: number;
     systemPrompt?: string;
+    apiKey?: string;
 }
 
 export interface UsageInfo {
