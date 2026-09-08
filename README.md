@@ -9,6 +9,7 @@
 - **Synthesis** — one click to generate an attributed combined answer
 - **Export** — download full council view as Markdown or PDF
 - **Settings** — per-model temperature/max tokens, concurrency cap, context mode
+- **Data validation** — register and login schemas for client and server
 
 ## Quick Start
 
