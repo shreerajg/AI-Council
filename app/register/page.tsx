@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Sparkles, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { registerSchema } from "@/lib/validations";
 
 export default function RegisterPage() {
   const router = useRouter();
