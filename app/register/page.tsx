@@ -28,8 +28,9 @@ export default function RegisterPage() {
       return;
     }
 
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+    const validation = registerSchema.safeParse({ name, email, password });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
       setLoading(false);
       return;
     }
