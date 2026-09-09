@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
     const settingsParam = searchParams.get("settings");
     const concurrencyLimitParam = searchParams.get("concurrencyLimit");
     const contextMode = searchParams.get("contextMode") || "shared";
+    const globalTempParam = searchParams.get("globalTemperature");
 
     if (!threadId || !modelsParam || !messageParam) {
         return new Response(
@@ -53,6 +54,14 @@ export async function GET(req: NextRequest) {
         ? JSON.parse(settingsParam)
         : {};
     const concurrencyLimit = parseInt(concurrencyLimitParam || "4", 10);
+    const globalTemperature = globalTempParam ? parseFloat(globalTempParam) : undefined;
+
+    for (const modelId of selectedModels) {
+        if (!settingsMap[modelId]) settingsMap[modelId] = {};
+        if (globalTemperature !== undefined && settingsMap[modelId].temperature === undefined) {
+            settingsMap[modelId].temperature = globalTemperature;
+        }
+    }
 
     // Load thread history
     let messages: AdapterMessage[] = [{ role: "user", content: messageParam }];
