@@ -29,6 +29,8 @@ export function SettingsDrawer() {
         setSynthesizerModel,
         modelSettings,
         updateModelSettings,
+        globalTemperature,
+        setGlobalTemperature,
     } = useCouncilStore();
 
     const modelsByProvider = MODEL_PROVIDERS.map(({ key, label, color }) => ({
