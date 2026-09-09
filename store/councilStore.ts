@@ -67,6 +67,8 @@ export interface CouncilStore {
     setContextMode: (mode: "shared" | "separate") => void;
     synthesizerModel: string;
     setSynthesizerModel: (model: string) => void;
+    globalTemperature: number;
+    setGlobalTemperature: (t: number) => void;
 
     // Current run state
     currentRuns: Record<string, ModelRun>;
