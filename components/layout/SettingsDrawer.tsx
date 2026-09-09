@@ -138,6 +138,31 @@ export function SettingsDrawer() {
 
                     <Separator className="bg-border/50" />
 
+                    {/* Temperature */}
+                    <div>
+                        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                            <div className="w-1 h-4 rounded-full bg-primary" />
+                            Temperature ({globalTemperature.toFixed(2)})
+                        </h3>
+                        <div className="px-1">
+                            <input
+                                type="range"
+                                min="0"
+                                max="2"
+                                step="0.05"
+                                value={globalTemperature}
+                                onChange={(e) => setGlobalTemperature(parseFloat(e.target.value))}
+                                className="w-full h-2 bg-accent/40 rounded-lg appearance-none cursor-pointer"
+                            />
+                            <div className="flex justify-between text-[10px] text-muted-foreground mt-2">
+                                <span>Precise</span>
+                                <span>Creative</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Separator className="bg-border/50" />
+
                     {/* Context Mode */}
                     <div>
                         <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
