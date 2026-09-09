@@ -155,6 +155,8 @@ export const useCouncilStore = create<CouncilStore>()(
             setContextMode: (mode) => set({ contextMode: mode }),
             synthesizerModel: "pollinations-openai",
             setSynthesizerModel: (model) => set({ synthesizerModel: model }),
+            globalTemperature: 0.7,
+            setGlobalTemperature: (t) => set({ globalTemperature: t }),
 
             currentRuns: {},
             setRunStatus: (modelId, status) =>
@@ -285,6 +287,7 @@ export const useCouncilStore = create<CouncilStore>()(
                 concurrencyLimit: s.concurrencyLimit,
                 contextMode: s.contextMode,
                 synthesizerModel: s.synthesizerModel,
+                globalTemperature: s.globalTemperature,
                 savedPrompts: s.savedPrompts,
             }),
         }
