@@ -80,6 +80,7 @@ export function useCouncilStream() {
                 settings: JSON.stringify(store.modelSettings),
                 concurrencyLimit: String(store.concurrencyLimit),
                 contextMode: store.contextMode,
+                globalTemperature: String(store.globalTemperature),
             });
 
             try {
