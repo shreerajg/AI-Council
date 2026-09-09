@@ -10,7 +10,7 @@
 - **Export** — download full council view as Markdown or PDF
 - **Settings** — per-model temperature/max tokens, concurrency cap, context mode
 - **Data validation** — register and login schemas for client and server
-
+- **Parallel search** — serach in parallel across all models with single query
 ## Quick Start
 
 ### 1. Install dependencies
