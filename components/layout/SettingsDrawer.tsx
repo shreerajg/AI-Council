@@ -13,6 +13,9 @@ import { CheckSquare, Settings2, Minus, Plus, Key } from "lucide-react";
 const MODEL_PROVIDERS = [
     { key: "pollinations", label: "Pollinations (Free)", color: "provider-badge-openai-compat" },
     { key: "nvidia", label: "NVIDIA NIM", color: "provider-badge-openai" },
+    { key: "stepfun", label: "StepFun", color: "provider-badge-openai" },
+    { key: "zhipu", label: "Zhipu AI (GLM)", color: "provider-badge-openai" },
+    { key: "gemini", label: "Google Gemini", color: "provider-badge-openai" },
 ];
 
 export function SettingsDrawer() {
