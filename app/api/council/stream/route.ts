@@ -50,14 +50,16 @@ export async function GET(req: NextRequest) {
     }
 
     const selectedModels: string[] = JSON.parse(modelsParam);
-    const settingsMap: Record<string, AdapterSettings> = settingsParam
+    const rawSettingsMap: Record<string, AdapterSettings> = settingsParam
         ? JSON.parse(settingsParam)
         : {};
     const concurrencyLimit = parseInt(concurrencyLimitParam || "4", 10);
     const globalTemperature = globalTempParam ? parseFloat(globalTempParam) : undefined;
 
+    const settingsMap: Record<string, AdapterSettings> = {};
     for (const modelId of selectedModels) {
-        if (!settingsMap[modelId]) settingsMap[modelId] = {};
+        const provider = modelId.split("-")[0];
+        settingsMap[modelId] = { ...(rawSettingsMap[provider] || {}) };
         if (globalTemperature !== undefined && settingsMap[modelId].temperature === undefined) {
             settingsMap[modelId].temperature = globalTemperature;
         }

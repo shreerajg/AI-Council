@@ -36,7 +36,7 @@ async function runModelWithRetry(
 
             let adapter;
             try {
-                adapter = getAdapter(modelId);
+                adapter = getAdapter(modelId, settings);
             } catch (adapterErr) {
                 const errMsg = adapterErr instanceof Error ? adapterErr.message : String(adapterErr);
                 onEvent({ event: "model_error", modelId, error: `Adapter not available: ${errMsg}` });
