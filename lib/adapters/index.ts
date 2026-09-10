@@ -1,8 +1,8 @@
 import { createOpenAICompatAdapter } from "./openai-compat";
 import { createPollinationsAdapter } from "./pollinations";
-import type { ModelAdapter } from "./types";
+import type { ModelAdapter, AdapterSettings } from "./types";
 
-export function getAdapter(modelId: string): ModelAdapter {
+export function getAdapter(modelId: string, settings?: AdapterSettings): ModelAdapter {
     if (modelId.startsWith("pollinations-")) {
         return createPollinationsAdapter(modelId);
     }
